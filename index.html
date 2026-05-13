@@ -3,17 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Capital B Projection — What if Capital B hits its targets?</title>
-<meta name="description" content="Interactive projection model for Capital B (ALCPB). Explore what happens if Capital B hits its 8-year BTC accumulation targets — full capital stack with warrants, OCAs and ATM.">
+<title>Capital B Projection — Model 3</title>
+<meta name="description" content="Interactive projection model for Capital B (ALCPB). Month-by-month simulation of warrants, OCAs, ATM and future issuance.">
 
-<!-- Open Graph / Social sharing -->
-<meta property="og:title" content="Capital B Projection — What if Capital B hits its targets?">
-<meta property="og:description" content="Interactive projection: full capital stack with warrants, OCAs and ATM. Model and formula by @Bthemoon2030.">
+<meta property="og:title" content="Capital B Projection — Model 3">
+<meta property="og:description" content="Month-by-month capital stack simulation. Model and formula by @Bthemoon2030.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@Bthemoon2030">
 
-<!-- Favicon: hexagon B in SVG -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='25,5 75,5 100,50 75,95 25,95 0,50' fill='%23FF5C00'/><text x='50' y='65' font-family='sans-serif' font-size='50' font-weight='500' text-anchor='middle' fill='%230a0a0a'>B</text></svg>">
 
 <style>
@@ -43,8 +41,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
 .cb-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; background: rgba(255,255,255,0.12); border-radius: 2px; outline: none; margin: 12px 0 18px; }
 .cb-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; background: #FF5C00; border-radius: 50%; cursor: pointer; }
 .cb-slider::-moz-range-thumb { width: 22px; height: 22px; background: #FF5C00; border-radius: 50%; cursor: pointer; border: none; }
-.cb-tgrid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 6px; }
-@media (min-width: 600px) { .cb-tgrid { grid-template-columns: repeat(4, minmax(0,1fr)); } }
+.cb-tgrid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
 .cb-tgrid-mnav { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 6px; }
 @media (min-width: 600px) { .cb-tgrid-mnav { grid-template-columns: repeat(5, minmax(0,1fr)); } }
 .cb-band-row { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -134,7 +131,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
       <span class="cb-hex">B</span>
       <span style="font-size: 13px; letter-spacing: 0.12em; color: rgba(255,255,255,0.85);">CAPITAL B PROJECTION</span>
     </div>
-    <div style="font-size: 19px; font-weight: 500; line-height: 1.25; color: #fff;">What if Capital B hits its targets?</div>
+    <div style="font-size: 19px; font-weight: 500; line-height: 1.25; color: #fff;">What if Capital B hits its target?</div>
   </div>
   <div class="cb-credit">
     <span class="by">Model and formula by<br><a href="https://twitter.com/Bthemoon2030" target="_blank">@Bthemoon2030</a></span>
@@ -145,14 +142,14 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
   <div class="cb-hero-label">Projected share price</div>
   <div class="cb-hero-num" id="r-price">€0.00</div>
   <div class="cb-hero-date" id="r-date">on —</div>
-  <div class="cb-hero-mult" id="r-mult">vs €0.68 today</div>
+  <div class="cb-hero-mult" id="r-mult">vs €0.64 today</div>
 </div>
 
 <div class="cb-stat-grid-3">
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-sats">0</div>
     <div class="cb-stat-label">Sats / share</div>
-    <div class="cb-stat-sub" id="r-sats-now">today ~732</div>
+    <div class="cb-stat-sub" id="r-sats-now">today ~722</div>
   </div>
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-shares">0M</div>
@@ -166,16 +163,16 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
   </div>
 </div>
 
-<div class="cb-step">
- </div>
-
 <div style="background: rgba(255,169,77,0.08); border: 0.5px solid rgba(255,169,77,0.3); border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; line-height: 1.55;">
   <div style="font-size: 11px; color: #FFA94D; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; font-weight: 500;">⚠ Important</div>
   <div style="font-size: 12px; color: rgba(255,255,255,0.75);">
-    To reach the target, Capital B will need <strong>additional instruments beyond what exists today</strong>. The model estimates this funding gap and assumes it's filled at share price × mNAV (similar to ATM issuance). Real future instruments may dilute more or less than estimated.
+    To reach the target Capital B will need <strong>additional instruments beyond what exists today</strong>; the model simulates this funding gap month-by-month, with new shares issued at each month's share price × mNAV.
   </div>
   <div style="font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 8px;">
-    <strong>mNAV is assumed constant</strong> across the entire period. In reality mNAV fluctuates with market sentiment — sometimes premium expansion, sometimes compression. The model uses your chosen mNAV as the average.
+    <strong>mNAV ramps up linearly</strong> from today's implied level to your chosen value over the period. Cash inflows (warrants, ATM, future instruments) roll over between months and are spent when BTC is acquired.
+  </div>
+  <div style="font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 8px;">
+    <strong>BTC price follows the power law</strong> month-by-month. If you manually override the end price, only the final months are blended toward your value.
   </div>
 </div>
 
@@ -183,7 +180,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
   <div><span class="cb-step-num">1</span><span class="cb-step-title">Pick a target</span></div>
   <div class="cb-tgrid" style="margin-top: 12px;" id="targets"></div>
   <div class="cb-divider"></div>
-  <div style="font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px;">BTC price band</div>
+  <div style="font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px;">BTC price band (power law)</div>
   <div class="cb-band-row">
     <button id="b-bear" class="cb-btn" onclick="setBand('bear')">Base</button>
     <button id="b-fair" class="cb-btn" onclick="setBand('fair')">Fair</button>
@@ -208,16 +205,16 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
 
 <div class="cb-step">
   <div><span class="cb-step-num">3</span><span class="cb-step-title">Outstanding warrants</span></div>
-  <div class="cb-step-hint">Exercise once share price ≥ strike × 1.30 in this scenario</div>
+  <div class="cb-step-hint">Exercised in the month share price ≥ strike × 1.30</div>
   <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 10px; margin-top: 12px;" id="warrants-detail"></div>
 </div>
 
 <div class="cb-step">
   <div><span class="cb-step-num">4</span><span class="cb-step-title">OCA conversion trigger</span></div>
- <div class="cb-step-hint">When holders voluntarily convert their BTC-denominated debt to shares</div>
-<div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 10px; margin-left: 30px; line-height: 1.6;">
-  <strong style="color: rgba(255,255,255,0.85);">What changing this means:</strong> A <strong>lower trigger</strong> (1.00× aggressive) means holders convert as soon as they're in-the-money. More shares get issued earlier, debt disappears from the balance sheet faster, but dilution hits harder. A <strong>higher trigger</strong> (1.50× patient) means holders sit on their BTC-denominated debt longer. Less dilution now, but if share price never reaches the trigger, the OCA goes to maturity and Capital B may have to repay holders in BTC — shrinking the stack. For shareholders: lower trigger = more shares, smaller drag. Higher trigger = fewer shares, but BTC repayment risk.
-</div>
+  <div class="cb-step-hint">When holders voluntarily convert their BTC-denominated debt to shares</div>
+  <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 10px; margin-left: 30px; line-height: 1.6;">
+    <strong style="color: rgba(255,255,255,0.85);">What changing this means:</strong> A <strong>lower trigger</strong> (1.00× aggressive) means holders convert as soon as they're in-the-money. More shares get issued earlier, debt disappears from the balance sheet faster, but dilution hits harder. A <strong>higher trigger</strong> (1.50× patient) means holders sit on their BTC-denominated debt longer. Less dilution now, but if share price never reaches the trigger, the OCA goes to maturity and Capital B may have to repay holders in BTC — shrinking the stack.
+  </div>
   <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px; margin-top: 12px;">
     <div class="cb-slider-row">
       <div class="cb-slider-label">
@@ -243,16 +240,16 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
   <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 10px; margin-top: 12px;" id="ocas-detail"></div>
   <div class="cb-warning-box" id="btc-warn"></div>
   <div style="font-size: 10px; color: rgba(255,255,255,0.45); margin-top: 8px; line-height: 1.5;">
-    Total BTC claim: <strong style="color:#ff8888;">1,060 ₿</strong>. Per-tranche allocation = EST.
+    Total BTC claim: <strong style="color:#ff8888;">1,060 ₿</strong>. Tranches with multiple holders shown as "Multi".
   </div>
 </div>
 
 <div class="cb-step">
-<div><span class="cb-step-num">6</span><span class="cb-step-title">ATM (TOBAM €300M)</span></div>
-<div class="cb-step-hint">When Capital B taps the at-the-market facility to issue new shares for cash</div>
-<div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 10px; margin-left: 30px; line-height: 1.6;">
-  <strong style="color: rgba(255,255,255,0.85);">What changing this means:</strong> The <strong>mNAV floor</strong> is the minimum premium at which Capital B is willing to issue new shares. Below this floor, no ATM happens — shareholders are protected from dilution at low premiums. Above it, Capital B issues up to the cap. <strong>Raising the floor</strong> = fewer ATM shares = less dilution but less BTC bought. <strong>Lowering the floor</strong> = more aggressive issuance = more BTC accumulated but more dilution. The <strong>cap remaining</strong> sets the maximum euros Capital B can raise this way. Each ATM-issued share is created at share price × mNAV (you sell into the premium), so a high mNAV produces fewer new shares per euro raised — this is the flywheel everyone talks about.
-</div>
+  <div><span class="cb-step-num">6</span><span class="cb-step-title">ATM (TOBAM €300M)</span></div>
+  <div class="cb-step-hint">When Capital B taps the at-the-market facility to issue new shares for cash</div>
+  <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 10px; margin-left: 30px; line-height: 1.6;">
+    <strong style="color: rgba(255,255,255,0.85);">What changing this means:</strong> The <strong>mNAV floor</strong> is the minimum premium at which Capital B is willing to issue new shares. Below this floor, no ATM happens. Above it, Capital B issues up to the cap. Each ATM-issued share is created at share price × mNAV — high mNAV produces fewer new shares per euro raised.
+  </div>
   <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px; margin-top: 12px;">
     <div class="cb-slider-row">
       <div class="cb-slider-label">
@@ -299,6 +296,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
     <span><i style="background:#FF5C00;"></i> Warrants</span>
     <span><i style="background:#9966cc;"></i> OCAs</span>
     <span><i style="background:#5DCAA5;"></i> ATM</span>
+    <span><i style="background:#FFA94D;"></i> Future</span>
   </div>
   <div class="cb-chart-wrap"><canvas id="stackchart"></canvas></div>
 </div>
@@ -306,7 +304,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
 <div class="cb-nfa">NFA of course, just math — <a href="https://twitter.com/Bthemoon2030" target="_blank">@Bthemoon2030</a></div>
 
 <div class="cb-caveat">
-  <strong style="color: rgba(255,255,255,0.7);">Assumptions:</strong> OCAs are BTC-denominated (fixed BTC claim). Per-tranche allocation EST. Conversion when: (a) holder voluntary at share &ge; conv &times; holder-trigger, OR (b) issuer-forced at share &ge; conv &times; 1.30 AND 3-yr anniversary. At maturity if not converted and share &lt; conv: holder picks BTC repayment. Warrants forced at strike &times; 1.30. ATM issued linearly over the period at each month's share price × mNAV (not all on end price), only when mNAV &ge; floor. Share price linear-interp. Iterative solver (12 passes).
+  Focused on the 20-month horizon (today through end of 2027) where Capital B's current capital stack is most relevant. BTC price follows the Santostasi power law per month. BTC accumulation assumed linear. Each month: cash inflows (warrants exercised when share ≥ strike × 1.30; ATM if mNAV ≥ floor and cap not exhausted; filler instruments if cash gap remains) buy BTC at that month's BTC price. Share price = (BTC stack × BTC price × mNAV) / shares outstanding, computed iteratively for convergence. OCAs convert when share ≥ conv × holder-trigger; only Moonlight (B-03) still has original gates so its holder needs share ≥ conv to convert voluntarily. Per-tranche BTC allocation per CEBE Tracker estimates.
 </div>
 
 </div>
@@ -314,13 +312,16 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const CURRENT_PRICE = 0.68;
+const CURRENT_PRICE = 0.64;
+const CURRENT_BTC_PRICE = 67500;
 const USD_EUR = 1.08;
 const GENESIS = new Date('2009-01-03').getTime();
-const NOW_DATE = new Date('2026-05-12').getTime();
+const NOW_DATE = new Date('2026-05-13').getTime();
 const PL_EXP = 5.8, PL_A = 5.36e-18;
 const BASIC_SHARES = 275.9e6;
+const FULLY_DILUTED_SHARES = 407.5e6;
 const FORCED_MULT = 1.30;
+const TODAY_BTC = 2943;
 
 const WARRANTS = [
   { id: '2026-01', count: 27.4e6, strike: 1.01 },
@@ -331,38 +332,39 @@ const WARRANTS = [
 ];
 
 const OCAS = [
-  { id: 'B-01', holder: 'Blockstream', btcClaim: 190, convPrice: 0.544, issuedMo: -13, gatesRemoved: true },
-  { id: 'B-01t', holder: 'TOBAM', btcClaim: 10, convPrice: 0.544, issuedMo: -13, gatesRemoved: true },
+  { id: 'B-01', holder: 'Multi', btcClaim: 200, convPrice: 0.544, issuedMo: -13, gatesRemoved: true },
   { id: 'B-02-2', holder: 'Blockstream', btcClaim: 605, convPrice: 0.7072, issuedMo: -11, gatesRemoved: true },
   { id: 'A-03', holder: 'TOBAM', btcClaim: 60, convPrice: 3.12, issuedMo: -11, gatesRemoved: true },
   { id: 'B-03', holder: 'Moonlight', btcClaim: 60, convPrice: 3.809, issuedMo: -11, gatesRemoved: false },
-  { id: 'A-04', holder: 'TOBAM', btcClaim: 50, convPrice: 2.59, issuedMo: -10, gatesRemoved: true },
-  { id: 'B-04', holder: 'Adam Back', btcClaim: 50, convPrice: 2.59, issuedMo: -10, gatesRemoved: true },
+  { id: 'A-04', holder: 'Multi', btcClaim: 100, convPrice: 2.59, issuedMo: -10, gatesRemoved: true },
   { id: 'A-05', holder: 'TOBAM', btcClaim: 35, convPrice: 1.83, issuedMo: -9, gatesRemoved: true },
 ];
 
 const OCA_SHARES = {
-  'B-01': 26095506, 'B-01t': 2022059, 'B-02-2': 78167171,
-  'A-03': 1923077, 'B-03': 1210332, 'A-04': 1930502,
-  'B-04': 1948271, 'A-05': 3551913,
+  'B-01': 28117565,
+  'B-02-2': 78167171,
+  'A-03': 1923077,
+  'B-03': 1210332,
+  'A-04': 3878773,
+  'A-05': 3551913,
 };
 
 const targets = [
   { y: 'FY26-27', low: 7000, high: 15000, mo: 20, endYear: 2027 },
-  { y: 'FY28-29', low: 21000, high: 42000, mo: 44, endYear: 2029 },
-  { y: 'FY30-31', low: 70000, high: 100000, mo: 68, endYear: 2031 },
-  { y: 'FY32-33', low: 170000, high: 260000, mo: 92, endYear: 2033 },
 ];
 
 const mnavOpts = [1, 2, 3, 4, 5, 6, 7, 8, 20];
-const STATE = { B0: 2943, BT: 15000, T: 20, m: 3, PT: 100000, floor: 1.5, atmCap: 300, holderTrigger: 1.10, fixedDate: null };
+const STATE = { B0: TODAY_BTC, BT: 15000, T: 20, m: 3, PT: 100000, floor: 1.5, atmCap: 300, holderTrigger: 1.10, fixedDate: null };
 let band = 'fair', autoPrice = true, stackChart = null, activeTarget = '0-high';
 
-function pl(mo, b) {
-  const d = (NOW_DATE + mo*30.44*86400000 - GENESIS) / 86400000;
-  const fair = PL_A * Math.pow(d, PL_EXP);
-  return (fair * (b === 'bear' ? 0.5 : b === 'bull' ? 3 : 1)) / USD_EUR;
+function btcPriceAtMonth(mo, bandMultVal) {
+  const days = (NOW_DATE + mo*30.44*86400000 - GENESIS) / 86400000;
+  const fairUSD = PL_A * Math.pow(days, PL_EXP);
+  return (fairUSD * bandMultVal) / USD_EUR;
 }
+
+function bandMult(b) { return b === 'bear' ? 0.5 : b === 'bull' ? 3 : 1; }
+function pl(mo, b) { return btcPriceAtMonth(mo, bandMult(b)); }
 
 function fmtPrice(n) {
   if (n >= 1e6) return '€' + (n/1e6).toFixed(1) + 'M';
@@ -470,148 +472,271 @@ function setManual() {
   document.getElementById('price-mode').className = 'mode man';
 }
 
-function processOCAs(T, endPrice) {
-  const sharePriceAt = (mo) => CURRENT_PRICE + (endPrice - CURRENT_PRICE) * (mo / T);
-  const results = [];
-  let totalShares = 0, btcRepayClaim = 0;
-  const HT = STATE.holderTrigger;
+function simulate(B0, BT, T, m, floor, atmCap, btcBandMultVal, holderTrigger, sharePriceGuess, mnavTraj, btcPriceTraj) {
+  // mnavTraj: array length T+1 of mNAV values per month (starts at current implied, ramps to target)
+  // btcPriceTraj: array length T+1 of BTC prices per month (EUR)
+  const btcStack = new Array(T + 1).fill(0);
+  const sharesOutstanding = new Array(T + 1).fill(0);
+  const warrantsExercised = new Array(T + 1).fill(0);
+  const ocasConverted = new Array(T + 1).fill(0);
+  const atmIssued = new Array(T + 1).fill(0);
+  const fillerIssued = new Array(T + 1).fill(0);
 
-  OCAS.forEach(oca => {
-    const sharesIfConv = OCA_SHARES[oca.id] || 0;
-    const maturity = oca.issuedMo + 60;
-    const anniv = oca.issuedMo + 36;
-    let status = 'pending', conversionMo = null;
+  const warrantState = WARRANTS.map(w => ({ ...w, exercised: false, exerciseMo: null }));
+  const ocaState = OCAS.map(o => ({ ...o, status: 'pending', conversionMo: null, sharesAdded: 0, btcRepayBT: 0 }));
 
-    for (let mo = 0; mo <= Math.min(T, maturity); mo++) {
-      const sp = sharePriceAt(mo);
-      if (oca.gatesRemoved && sp >= oca.convPrice * HT) { status = 'converted'; conversionMo = mo; break; }
-      if (mo >= anniv && sp >= oca.convPrice * FORCED_MULT) { status = 'forced'; conversionMo = mo; break; }
-      if (!oca.gatesRemoved && sp >= oca.convPrice * HT) { status = 'converted'; conversionMo = mo; break; }
-    }
+  btcStack[0] = B0;
+  sharesOutstanding[0] = BASIC_SHARES;
 
-    let sharesAdded = 0, btcClaim = 0;
-    if (status === 'converted' || status === 'forced') sharesAdded = sharesIfConv;
-    else if (T >= maturity) {
-      if (sharePriceAt(maturity) >= oca.convPrice) { status = 'shares'; sharesAdded = sharesIfConv; }
-      else { status = 'btcpay'; btcClaim = oca.btcClaim; }
-    }
+  let atmCapRemaining = atmCap * 1e6;
+  let cashTreasury = 0; // Rolling cash balance — can hold cash across months
 
-    totalShares += sharesAdded;
-    btcRepayClaim += btcClaim;
-    results.push({ ...oca, status, conversionMo, sharesAdded, btcRepayBT: btcClaim, sharesIfConverted: sharesIfConv });
-  });
+  for (let mo = 1; mo <= T; mo++) {
+    btcStack[mo] = btcStack[mo - 1];
+    sharesOutstanding[mo] = sharesOutstanding[mo - 1];
+    warrantsExercised[mo] = warrantsExercised[mo - 1];
+    ocasConverted[mo] = ocasConverted[mo - 1];
+    atmIssued[mo] = atmIssued[mo - 1];
+    fillerIssued[mo] = fillerIssued[mo - 1];
 
-  return { results, totalConvertedShares: totalShares, btcRepayClaim };
-}
+    const btcPrice = btcPriceTraj[mo];
+    const sp = sharePriceGuess[mo];
+    const mThis = mnavTraj[mo]; // mNAV this month (ramped)
 
-function solveCapitalStack(B0, BT, T, m, PT, floor, atmCap) {
-  let prevPrice = Math.max(0.5, (BT * m * PT) / (BASIC_SHARES * 1.5 + 129.4e6));
-  let result = {};
-  for (let iter = 0; iter < 12; iter++) {
-    const ocaInfo = processOCAs(T, prevPrice);
-    let warrantsExercised = 0, warrantCash = 0;
-    WARRANTS.forEach(w => {
-      if (prevPrice >= w.strike * FORCED_MULT) {
-        warrantsExercised += w.count;
-        warrantCash += w.count * w.strike;
+    // 1. Warrants in-the-money this month: add shares + cash to treasury
+    warrantState.forEach(w => {
+      if (!w.exercised && sp >= w.strike * FORCED_MULT) {
+        w.exercised = true;
+        w.exerciseMo = mo;
+        sharesOutstanding[mo] += w.count;
+        warrantsExercised[mo] += w.count;
+        cashTreasury += w.count * w.strike;
       }
     });
 
-   let atmCash, atmShares, atmDisabled;
-    if (m >= floor && atmCap > 0) {
-      atmCash = atmCap * 1e6;
-      // ATM is issued linearly over the period at each month's interpolated share price × mNAV
-      const cashPerMonth = atmCash / T;
-      atmShares = 0;
-      for (let mo = 1; mo <= T; mo++) {
-        const interpPrice = CURRENT_PRICE + (prevPrice - CURRENT_PRICE) * (mo / T);
-        const atmPriceAtMo = Math.max(0.1, interpPrice * m);
-        atmShares += cashPerMonth / atmPriceAtMo;
+    // 2. OCAs: conversion or maturity logic (no cash, just shares or BTC out)
+    ocaState.forEach(o => {
+      if (o.status !== 'pending') return;
+      const anniv = o.issuedMo + 36;
+      const maturity = o.issuedMo + 60;
+      if (o.gatesRemoved && sp >= o.convPrice * holderTrigger) {
+        o.status = 'converted'; o.conversionMo = mo;
+        o.sharesAdded = OCA_SHARES[o.id] || 0;
+        sharesOutstanding[mo] += o.sharesAdded;
+        ocasConverted[mo] += o.sharesAdded;
+        return;
       }
-      atmDisabled = false;
-    } else {
-      atmCash = 0; atmShares = 0; atmDisabled = (m < floor);
+      if (mo >= anniv && sp >= o.convPrice * FORCED_MULT) {
+        o.status = 'forced'; o.conversionMo = mo;
+        o.sharesAdded = OCA_SHARES[o.id] || 0;
+        sharesOutstanding[mo] += o.sharesAdded;
+        ocasConverted[mo] += o.sharesAdded;
+        return;
+      }
+      if (!o.gatesRemoved && sp >= o.convPrice * holderTrigger) {
+        o.status = 'converted'; o.conversionMo = mo;
+        o.sharesAdded = OCA_SHARES[o.id] || 0;
+        sharesOutstanding[mo] += o.sharesAdded;
+        ocasConverted[mo] += o.sharesAdded;
+        return;
+      }
+      if (mo >= maturity) {
+        if (sp >= o.convPrice) {
+          o.status = 'shares'; o.conversionMo = mo;
+          o.sharesAdded = OCA_SHARES[o.id] || 0;
+          sharesOutstanding[mo] += o.sharesAdded;
+          ocasConverted[mo] += o.sharesAdded;
+        } else {
+          o.status = 'btcpay'; o.conversionMo = mo;
+          o.btcRepayBT = o.btcClaim;
+          btcStack[mo] -= o.btcClaim;
+        }
+      }
+    });
+
+    // 3. BTC accumulation target this month (linear path)
+    const btcTargetThisMo = B0 + (BT - B0) * (mo / T);
+    let btcNeededThisMo = btcTargetThisMo - btcStack[mo];
+    if (btcNeededThisMo < 0) btcNeededThisMo = 0;
+    let cashNeededThisMo = btcNeededThisMo * btcPrice;
+
+    // 4. ATM contribution this month — opportunistic when mNAV >= floor
+    // ATM contributes up to its monthly pro-rata share of remaining cap
+    if (mThis >= floor && atmCapRemaining > 0) {
+      const remainingMonths = T - mo + 1;
+      const atmCashThisMo = Math.min(atmCapRemaining, atmCapRemaining / remainingMonths);
+      const atmPrice = Math.max(0.1, sp * mThis);
+      const atmSharesThisMo = atmCashThisMo / atmPrice;
+      sharesOutstanding[mo] += atmSharesThisMo;
+      atmIssued[mo] += atmSharesThisMo;
+      atmCapRemaining -= atmCashThisMo;
+      cashTreasury += atmCashThisMo;
     }
 
-    const sharesBeforeFiller = BASIC_SHARES + warrantsExercised + ocaInfo.totalConvertedShares + atmShares;
-    const effectiveBT = BT - ocaInfo.btcRepayClaim;
+    // 5. Spend treasury cash on BTC for this month's need
+    let cashFromTreasury = Math.min(cashTreasury, cashNeededThisMo);
+    let btcBought = cashFromTreasury / btcPrice;
+    cashTreasury -= cashFromTreasury;
+    let cashGapThisMo = cashNeededThisMo - cashFromTreasury;
 
-    // Funding gap: how many BTC can existing instruments fund vs what's needed
-    const grossBTCNeeded = (BT - B0) + ocaInfo.btcRepayClaim;
-    const cashAvailable = warrantCash + atmCash;
-    const btcFundable = cashAvailable / PT;
-    const btcGap = Math.max(0, grossBTCNeeded - btcFundable);
-    const cashGap = btcGap * PT;
-
-   // Filler: future instruments issued linearly over the period at each month's share price × mNAV
-    let fillerShares = 0;
-    if (cashGap > 0) {
-      const cashGapPerMonth = cashGap / T;
-      for (let mo = 1; mo <= T; mo++) {
-        const interpPrice = CURRENT_PRICE + (prevPrice - CURRENT_PRICE) * (mo / T);
-        const fillerPriceAtMo = Math.max(0.1, interpPrice * m);
-        fillerShares += cashGapPerMonth / fillerPriceAtMo;
-      }
+    // 6. Filler (future instruments) only if cash gap remains this month
+    if (cashGapThisMo > 0) {
+      const fillerPrice = Math.max(0.1, sp * mThis);
+      const fillerSharesThisMo = cashGapThisMo / fillerPrice;
+      sharesOutstanding[mo] += fillerSharesThisMo;
+      fillerIssued[mo] += fillerSharesThisMo;
+      btcBought += cashGapThisMo / btcPrice;
     }
 
-    const finalShares = sharesBeforeFiller + fillerShares;
-    const sharePrice = (effectiveBT * PT * m) / finalShares;
-    const outstandingClaim = ocaInfo.results.reduce((sum, o) => o.status === 'pending' ? sum + o.btcClaim : sum, 0);
-    result = { warrantsExercised, warrantCash, atmShares, atmCash, finalShares, sharePrice, ocaInfo, atmDisabled, outstandingClaim, fillerShares, btcGap, cashGap };
-    if (Math.abs(sharePrice - prevPrice) / prevPrice < 0.0005) break;
-    prevPrice = sharePrice;
+    btcStack[mo] += btcBought;
   }
-  return result;
+
+  return {
+    btcStack, sharesOutstanding, warrantsExercised, ocasConverted, atmIssued, fillerIssued,
+    warrantState, ocaState, finalTreasury: cashTreasury
+  };
+}
+
+function computeSharePriceTrajectory(sim, mnavTraj, btcPriceTraj) {
+  const T = sim.btcStack.length - 1;
+  const arr = new Array(T + 1);
+  for (let mo = 0; mo <= T; mo++) {
+    const btcPrice = btcPriceTraj[mo];
+    const nav = sim.btcStack[mo] * btcPrice;
+    arr[mo] = (nav * mnavTraj[mo]) / Math.max(1, sim.sharesOutstanding[mo]);
+  }
+  return arr;
+}
+
+function buildBtcPriceTrajectory(T, baseBandMult, userPT) {
+  // BTC prices per month from power law.
+  // If userPT differs from power-law-end, only the endpoint is forced;
+  // earlier months are unchanged (no scaling of trajectory).
+  const arr = new Array(T + 1);
+  for (let mo = 0; mo <= T; mo++) {
+    arr[mo] = btcPriceAtMonth(mo, baseBandMult);
+  }
+  // If user manually set PT, replace the endpoint, leaving early months on power law
+  if (userPT && Math.abs(userPT - arr[T]) / arr[T] > 0.05) {
+    // Smoothly blend: keep early months on power-law, ramp the deviation in the last third
+    const blendStart = Math.floor(T * 0.66);
+    for (let mo = blendStart; mo <= T; mo++) {
+      const blend = (mo - blendStart) / Math.max(1, T - blendStart);
+      arr[mo] = arr[mo] * (1 - blend) + userPT * blend;
+    }
+  }
+  return arr;
+}
+
+function buildMnavTrajectory(T, targetMnav) {
+  // mNAV ramps from current implied mNAV to target.
+  // Day-0 implied mNAV uses today's actual BTC price (not power law).
+  const todayNAVperShare = TODAY_BTC * CURRENT_BTC_PRICE / FULLY_DILUTED_SHARES;
+  const currentImpliedMnav = Math.max(1.0, CURRENT_PRICE / Math.max(0.01, todayNAVperShare));
+  const arr = new Array(T + 1);
+  for (let mo = 0; mo <= T; mo++) {
+    arr[mo] = currentImpliedMnav + (targetMnav - currentImpliedMnav) * (mo / T);
+  }
+  return arr;
+}
+
+function solveModel3(B0, BT, T, m, floor, atmCap, btcBandMultVal, holderTrigger, userPT) {
+  const btcPriceTraj = buildBtcPriceTrajectory(T, btcBandMultVal, userPT);
+  const mnavTraj = buildMnavTrajectory(T, m);
+
+  // Initial guess for share price trajectory
+  const endBTCPrice = btcPriceTraj[T];
+  const initialEnd = (BT * m * endBTCPrice) / (BASIC_SHARES * 2);
+  let sharePriceGuess = new Array(T + 1);
+  for (let mo = 0; mo <= T; mo++) {
+    sharePriceGuess[mo] = CURRENT_PRICE + (initialEnd - CURRENT_PRICE) * (mo / T);
+  }
+
+  let sim = null;
+  for (let iter = 0; iter < 25; iter++) {
+    sim = simulate(B0, BT, T, m, floor, atmCap, btcBandMultVal, holderTrigger, sharePriceGuess, mnavTraj, btcPriceTraj);
+    const newTrajectory = computeSharePriceTrajectory(sim, mnavTraj, btcPriceTraj);
+
+    const oldEnd = sharePriceGuess[T];
+    const newEnd = newTrajectory[T];
+    const diff = Math.abs(newEnd - oldEnd) / Math.max(0.01, oldEnd);
+
+    // Damped update
+    for (let mo = 0; mo <= T; mo++) {
+      sharePriceGuess[mo] = 0.5 * sharePriceGuess[mo] + 0.5 * newTrajectory[mo];
+    }
+
+    if (diff < 0.003) break;
+  }
+
+  return { sim, sharePriceTrajectory: sharePriceGuess, btcPriceTraj, mnavTraj };
 }
 
 function compute() {
-  const { B0, BT, T, m, PT, floor, atmCap } = STATE;
+  const { B0, BT, T, m, PT, floor, atmCap, holderTrigger } = STATE;
   if (BT <= B0 || T <= 0 || m <= 0 || B0 <= 0) return;
   updatePriceLabel();
 
-  const r = solveCapitalStack(B0, BT, T, m, PT, floor, atmCap);
-  const effBT = BT - r.ocaInfo.btcRepayClaim;
-  const sats = (effBT * 1e8) / r.finalShares;
-  const satsNow = (B0 * 1e8) / 401.7e6;
-  const drag = (r.outstandingClaim / BT) * 100;
+  // Use the base band multiplier directly; userPT is now an endpoint override only
+  const baseBandMult = bandMult(band);
 
-  document.getElementById('r-price').textContent = r.sharePrice >= 1000 ? '€' + Math.round(r.sharePrice).toLocaleString('en-US') : '€' + r.sharePrice.toFixed(2);
-  document.getElementById('r-mult').textContent = (r.sharePrice/CURRENT_PRICE).toFixed(1) + '× vs €0.68 today';
+  const { sim, sharePriceTrajectory } = solveModel3(B0, BT, T, m, floor, atmCap, baseBandMult, holderTrigger, PT);
+
+  const finalShares = sim.sharesOutstanding[T];
+  const finalBTC = sim.btcStack[T];
+  const finalSharePrice = sharePriceTrajectory[T];
+  const sats = (finalBTC * 1e8) / finalShares;
+  const satsNow = (TODAY_BTC * 1e8) / FULLY_DILUTED_SHARES;
+
+  const outstandingClaim = sim.ocaState.reduce((sum, o) => o.status === 'pending' ? sum + o.btcClaim : sum, 0);
+  const drag = (outstandingClaim / Math.max(1, finalBTC)) * 100;
+  const btcRepayClaim = sim.ocaState.reduce((sum, o) => o.status === 'btcpay' ? sum + o.btcRepayBT : sum, 0);
+  const atmDisabled = (m < floor);
+
+  document.getElementById('r-price').textContent = finalSharePrice >= 1000 ? '€' + Math.round(finalSharePrice).toLocaleString('en-US') : '€' + finalSharePrice.toFixed(2);
+  document.getElementById('r-mult').textContent = (finalSharePrice/CURRENT_PRICE).toFixed(1) + '× vs €0.64 today';
   document.getElementById('r-sats').textContent = Math.round(sats).toLocaleString('en-US');
   document.getElementById('r-sats-now').textContent = 'today ~' + Math.round(satsNow);
-  document.getElementById('r-shares').textContent = Math.round(r.finalShares / 1e6) + 'M';
-  document.getElementById('r-share-mult').textContent = (r.finalShares/BASIC_SHARES).toFixed(2) + '× vs 276M';
+  document.getElementById('r-shares').textContent = Math.round(finalShares / 1e6) + 'M';
+  document.getElementById('r-share-mult').textContent = (finalShares/BASIC_SHARES).toFixed(2) + '× vs 276M';
   document.getElementById('r-drag').textContent = drag.toFixed(1) + '%';
-  document.getElementById('r-drag-bt').textContent = Math.round(r.outstandingClaim).toLocaleString('en-US') + ' ₿ claim';
+  document.getElementById('r-drag-bt').textContent = Math.round(outstandingClaim).toLocaleString('en-US') + ' ₿ claim';
 
   document.getElementById('drag-pct-big').textContent = drag.toFixed(1) + '% drag';
   document.getElementById('drag-fill').style.width = Math.min(100, drag) + '%';
-  document.getElementById('drag-claim').textContent = Math.round(r.outstandingClaim).toLocaleString('en-US') + ' ₿ claimed';
-  document.getElementById('drag-free').textContent = 'of ' + BT.toLocaleString('en-US') + ' ₿ total';
+  document.getElementById('drag-claim').textContent = Math.round(outstandingClaim).toLocaleString('en-US') + ' ₿ claimed';
+  document.getElementById('drag-free').textContent = 'of ' + Math.round(finalBTC).toLocaleString('en-US') + ' ₿ total';
 
   const atmWarn = document.getElementById('atm-disabled-warn');
-  if (r.atmDisabled) {
+  if (atmDisabled) {
     document.getElementById('atm-cur-m').textContent = m.toFixed(1);
     document.getElementById('atm-cur-f').textContent = floor.toFixed(1);
     atmWarn.classList.add('show');
   } else atmWarn.classList.remove('show');
 
-  renderWarrants(r.sharePrice);
-  renderOCAs(r.ocaInfo.results, T);
-  renderBTCWarn(r.ocaInfo.btcRepayClaim, BT);
-  renderStack(r);
-  drawChart(B0, BT, T, m, PT, floor, atmCap, r);
+  renderWarrants(sim.warrantState);
+  renderOCAs(sim.ocaState);
+  renderBTCWarn(btcRepayClaim, BT);
+  renderStack(sim, finalShares, atmDisabled);
+  drawChart(sim, T);
 }
 
-function renderWarrants(sp) {
-  document.getElementById('warrants-detail').innerHTML = WARRANTS.map(w => {
+function renderWarrants(warrantState) {
+  document.getElementById('warrants-detail').innerHTML = warrantState.map(w => {
     const trigger = w.strike * FORCED_MULT;
-    const inMoney = sp >= trigger;
-    return `<div class="cb-tranche-row"><div class="tag">${w.id}</div><div class="info">€${w.strike.toFixed(2)} strike<small>trigger €${trigger.toFixed(2)}</small></div><div class="count">${(w.count/1e6).toFixed(1)}M</div><div class="status ${inMoney ? 'exer' : 'out'}">${inMoney ? 'should exercise' : 'not yet'}</div></div>`;
+    let statusLabel, statusClass;
+    if (w.exercised) {
+      statusLabel = 'should exercise';
+      statusClass = 'exer';
+    } else {
+      statusLabel = 'not yet';
+      statusClass = 'out';
+    }
+    return `<div class="cb-tranche-row"><div class="tag">${w.id}</div><div class="info">€${w.strike.toFixed(2)} strike<small>trigger €${trigger.toFixed(2)}</small></div><div class="count">${(w.count/1e6).toFixed(1)}M</div><div class="status ${statusClass}">${statusLabel}</div></div>`;
   }).join('');
 }
 
-function renderOCAs(results, T) {
+function renderOCAs(ocaState) {
   const HT = STATE.holderTrigger;
   const sm = {
     pending: { l: 'not yet', c: 'out' },
@@ -620,12 +745,12 @@ function renderOCAs(results, T) {
     shares: { l: 'shares @ mat', c: 'shares' },
     btcpay: { l: 'BTC repaid', c: 'btcpay' }
   };
-  document.getElementById('ocas-detail').innerHTML = results.map(o => {
+  document.getElementById('ocas-detail').innerHTML = ocaState.map(o => {
     const s = sm[o.status];
     let timing = '';
-    if (o.status === 'converted' || o.status === 'forced') timing = `${o.status === 'forced' ? 'forced' : 'voluntary'} mo ${o.conversionMo}`;
+    if (o.status === 'converted' || o.status === 'forced') timing = `${o.status === 'forced' ? 'forced' : 'voluntary'}`;
     else if (o.status === 'pending') timing = `await €${(o.convPrice * HT).toFixed(2)} share`;
-    else timing = `at maturity mo ${o.issuedMo+60}`;
+    else timing = `at maturity`;
     const claimLine = o.status === 'btcpay' ? Math.round(o.btcRepayBT) + ' ₿' : Math.round(o.btcClaim) + ' ₿';
     const note = o.status === 'btcpay' ? 'BTC paid' : (o.sharesAdded > 0 ? (o.sharesAdded/1e6).toFixed(1) + 'M shares' : 'claim active');
     return `<div class="cb-tranche-row"><div class="tag oca">${o.id}</div><div class="info">€${o.convPrice.toFixed(2)} &middot; ${o.holder}<small>${timing}</small></div><div class="count">${claimLine}<small>${note}</small></div><div class="status ${s.c}">${s.l}</div></div>`;
@@ -640,50 +765,46 @@ function renderBTCWarn(btcRepay, BT) {
   } else w.classList.remove('show');
 }
 
-function renderStack(r) {
-  const total = r.finalShares;
+function renderStack(sim, finalShares, atmDisabled) {
+  const T = sim.sharesOutstanding.length - 1;
+  const total = finalShares;
+  const warrantTotal = sim.warrantsExercised[T];
+  const ocaTotal = sim.ocasConverted[T];
+  const atmTotal = sim.atmIssued[T];
+  const fillerTotal = sim.fillerIssued[T];
+
   const rows = [
     { c: '#666', l: 'Basic shares', s: '275.9M, fixed', n: BASIC_SHARES },
-    { c: '#FF5C00', l: 'Warrants exercised', s: 'in-the-money', n: r.warrantsExercised },
-    { c: '#9966cc', l: 'OCAs converted', s: 'eliminates claim', n: r.ocaInfo.totalConvertedShares },
-    { c: '#5DCAA5', l: 'ATM issuance', s: r.atmDisabled ? 'DISABLED' : 'at share × mNAV', n: r.atmShares },
-     { c: '#FFA94D', l: 'Future instruments', s: 'fills funding gap @ share × mNAV', n: r.fillerShares },
+    { c: '#FF5C00', l: 'Warrants exercised', s: 'in-the-money', n: warrantTotal },
+    { c: '#9966cc', l: 'OCAs converted', s: 'eliminates claim', n: ocaTotal },
+    { c: '#5DCAA5', l: 'ATM issuance', s: atmDisabled ? 'DISABLED' : 'at share × mNAV', n: atmTotal },
+    { c: '#FFA94D', l: 'Future instruments', s: 'fills funding gap @ share × mNAV', n: fillerTotal },
   ];
   let html = rows.map(rr => `<div class="cb-stack-row"><div class="src" style="background:${rr.c}"></div><div class="lbl">${rr.l}<small>${rr.s}</small></div><div class="v">${(rr.n/1e6).toFixed(1)}M <span style="color:rgba(255,255,255,0.4);font-size:10px;">(${(rr.n/total*100).toFixed(0)}%)</span></div></div>`).join('');
   html += `<div class="cb-stack-row total"><div class="src" style="opacity:0;"></div><div class="lbl">Total diluted shares</div><div class="v">${(total/1e6).toFixed(1)}M</div></div>`;
   document.getElementById('stack-breakdown').innerHTML = html;
 }
 
-function drawChart(B0, BT, T, m, PT, floor, atmCap, r) {
-  const labels = [], bd = [], wd = [], od = [], ad = [];
+function drawChart(sim, T) {
+  const labels = [], bd = [], wd = [], od = [], ad = [], fd = [];
   const step = Math.max(1, Math.floor(T/12));
-  const tp = r.sharePrice;
-  const fAtm = r.atmShares;
-  const spAt = (mo) => CURRENT_PRICE + (tp - CURRENT_PRICE) * (mo / T);
 
   for (let i = 0; i <= T; i += step) {
     labels.push(i === 0 ? 'now' : chartDateLabel(i));
-    const t = i / T;
-    const p = spAt(i);
-    let wAt = 0;
-    WARRANTS.forEach(w => { if (p >= w.strike * FORCED_MULT) wAt += w.count; });
-    let oAt = 0;
-    r.ocaInfo.results.forEach(o => {
-      if ((o.status === 'converted' || o.status === 'forced') && i >= o.conversionMo) oAt += o.sharesAdded;
-      else if ((o.status === 'shares' || o.status === 'btcpay') && i >= o.issuedMo + 60 && o.sharesAdded > 0) oAt += o.sharesAdded;
-    });
-    bd.push(BASIC_SHARES/1e6);
-    wd.push(wAt/1e6);
-    od.push(oAt/1e6);
-    ad.push((fAtm * t)/1e6);
+    bd.push(BASIC_SHARES / 1e6);
+    wd.push(sim.warrantsExercised[i] / 1e6);
+    od.push(sim.ocasConverted[i] / 1e6);
+    ad.push(sim.atmIssued[i] / 1e6);
+    fd.push(sim.fillerIssued[i] / 1e6);
   }
   const lastLabel = T === 0 ? 'now' : chartDateLabel(T);
   if (labels[labels.length-1] !== lastLabel) {
     labels.push(lastLabel);
-    bd.push(BASIC_SHARES/1e6);
-    wd.push(r.warrantsExercised/1e6);
-    od.push(r.ocaInfo.totalConvertedShares/1e6);
-    ad.push(r.atmShares/1e6);
+    bd.push(BASIC_SHARES / 1e6);
+    wd.push(sim.warrantsExercised[T] / 1e6);
+    od.push(sim.ocasConverted[T] / 1e6);
+    ad.push(sim.atmIssued[T] / 1e6);
+    fd.push(sim.fillerIssued[T] / 1e6);
   }
 
   if (stackChart) stackChart.destroy();
@@ -694,6 +815,7 @@ function drawChart(B0, BT, T, m, PT, floor, atmCap, r) {
       { label: 'Warrants', data: wd, borderColor: '#FF5C00', backgroundColor: 'rgba(255,92,0,0.7)', fill: '-1', pointRadius: 0, borderWidth: 0 },
       { label: 'OCAs', data: od, borderColor: '#9966cc', backgroundColor: 'rgba(153,102,204,0.7)', fill: '-1', pointRadius: 0, borderWidth: 0 },
       { label: 'ATM', data: ad, borderColor: '#5DCAA5', backgroundColor: 'rgba(93,202,165,0.7)', fill: '-1', pointRadius: 0, borderWidth: 0 },
+      { label: 'Future', data: fd, borderColor: '#FFA94D', backgroundColor: 'rgba(255,169,77,0.7)', fill: '-1', pointRadius: 0, borderWidth: 0 },
     ]},
     options: {
       responsive: true, maintainAspectRatio: false,
