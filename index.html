@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Capital B Projection — Model 3</title>
-<meta name="description" content="Interactive projection model for Capital B (ALCPB). Month-by-month simulation of warrants, OCAs, ATM and future issuance.">
+<meta name="description" content="Projection model for Capital B (ALCPB). Month-by-month simulation of warrants, OCAs, ATM and future issuance.">
 
 <meta property="og:title" content="Capital B Projection — Model 3">
 <meta property="og:description" content="Month-by-month capital stack simulation. Model and formula by @Bthemoon2030.">
@@ -185,9 +185,6 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
     <span class="mode" id="price-mode">auto: fair</span>
     <input type="number" class="cb-input" id="i-pt" value="100000" />
   </div>
-  <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 10px; line-height: 1.6;">
-    BTC price follows the power law (projections by <a href="https://twitter.com/Giovann35084111" target="_blank" style="color: #FFA94D; text-decoration: none;">@Giovann35084111</a>).
-  </div>
 </div>
 
 <div class="cb-step">
@@ -213,24 +210,24 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
   <div><span class="cb-step-num">4</span><span class="cb-step-title">OCA conversion trigger</span></div>
   <div class="cb-step-hint">When holders voluntarily convert their BTC-denominated debt to shares</div>
   <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 10px; margin-left: 30px; line-height: 1.6;">
-    <strong style="color: rgba(255,255,255,0.85);">What changing this means:</strong> A <strong>lower trigger</strong> (1.00× aggressive) means holders convert as soon as they're in-the-money. More shares get issued earlier, debt disappears from the balance sheet faster, but dilution hits harder. A <strong>higher trigger</strong> (1.50× patient) means holders sit on their BTC-denominated debt longer. Less dilution now, but if share price never reaches the trigger, the OCA goes to maturity and Capital B may have to repay holders in BTC — shrinking the stack.
+    <strong style="color: rgba(255,255,255,0.85);">What changing this means:</strong> Share count from conversion is fixed — what changes is <strong>when</strong> holders convert and <strong>whether</strong> they convert at all. Higher trigger = more BTC repayment risk if share price never reaches it.
   </div>
   <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px; margin-top: 12px;">
     <div class="cb-slider-row">
       <div class="cb-slider-label">
         <span>Holder trigger (× conv price)</span>
-        <input type="number" class="cb-slider-input" id="t-trigger-i" value="1.10" step="0.05" min="1" max="2" style="width: 70px;" />
+        <input type="number" class="cb-slider-input" id="t-trigger-i" value="1.30" step="0.05" min="1" max="2" style="width: 70px;" />
         <span class="cb-slider-unit">×</span>
       </div>
-      <input type="range" class="cb-slider" id="t-trigger" min="1" max="2" value="1.10" step="0.05" />
+      <input type="range" class="cb-slider" id="t-trigger" min="1" max="2" value="1.30" step="0.05" />
       <div class="cb-trigger-presets">
         <button onclick="setTriggerPreset(1.00)" id="tp-1">1.00× <span style="opacity:0.5;">aggressive</span></button>
-        <button onclick="setTriggerPreset(1.10)" id="tp-2" class="active">1.10× <span style="opacity:0.5;">rational</span></button>
-        <button onclick="setTriggerPreset(1.30)" id="tp-3">1.30× <span style="opacity:0.5;">forced-only</span></button>
+        <button onclick="setTriggerPreset(1.10)" id="tp-2">1.10× <span style="opacity:0.5;">rational</span></button>
+        <button onclick="setTriggerPreset(1.30)" id="tp-3" class="active">1.30× <span style="opacity:0.5;">forced-only</span></button>
         <button onclick="setTriggerPreset(1.50)" id="tp-4">1.50× <span style="opacity:0.5;">patient</span></button>
       </div>
     </div>
-    <div class="cb-info-box" id="trigger-explainer">Holders convert voluntarily once share price ≥ conv price × 1.10 (10% buffer for risk premium).</div>
+    <div class="cb-info-box" id="trigger-explainer">Holders convert voluntarily once share price ≥ conv price × 1.30 (forced-only).</div>
   </div>
 </div>
 
@@ -358,7 +355,7 @@ const targets = [
 ];
 
 const mnavOpts = [1, 2, 3, 4, 5, 6, 7, 8, 20];
-const STATE = { B0: TODAY_BTC, BT: 15000, T: 20, m: 3, PT: 100000, floor: 1.5, atmCap: 300, holderTrigger: 1.10, fixedDate: null };
+const STATE = { B0: TODAY_BTC, BT: 15000, T: 20, m: 3, PT: 100000, floor: 1.5, atmCap: 300, holderTrigger: 1.30, fixedDate: null };
 let band = 'fair', autoPrice = true, stackChart = null, activeTarget = '0-high';
 
 function btcEndPriceForBand(b) {
