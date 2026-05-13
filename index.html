@@ -174,6 +174,9 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
   <div style="font-size: 13px; color: #fff;">
     This model only includes <strong>what is known today</strong>: existing warrants, OCAs and the TOBAM ATM facility. It does not factor in future new instruments or future agreements Capital B may enter into.
   </div>
+  <div style="font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 8px;">
+    <strong>mNAV is assumed constant</strong> across the entire period. In reality mNAV fluctuates with market sentiment — sometimes premium expansion, sometimes compression. The model uses your chosen mNAV as the average.
+  </div>
 </div>
 
 <div class="cb-step">
@@ -303,7 +306,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
 <div class="cb-nfa">NFA of course, just math — <a href="https://twitter.com/Bthemoon2030" target="_blank">@Bthemoon2030</a></div>
 
 <div class="cb-caveat">
-  <strong style="color: rgba(255,255,255,0.7);">Assumptions:</strong> OCAs are BTC-denominated (fixed BTC claim). Per-tranche allocation EST. Conversion when: (a) holder voluntary at share &ge; conv &times; holder-trigger, OR (b) issuer-forced at share &ge; conv &times; 1.30 AND 3-yr anniversary. At maturity if not converted and share &lt; conv: holder picks BTC repayment. Warrants forced at strike &times; 1.30. ATM linear, only when mNAV &ge; floor. Share price linear-interp. Iterative solver (12 passes).
+  <strong style="color: rgba(255,255,255,0.7);">Assumptions:</strong> OCAs are BTC-denominated (fixed BTC claim). Per-tranche allocation EST. Conversion when: (a) holder voluntary at share &ge; conv &times; holder-trigger, OR (b) issuer-forced at share &ge; conv &times; 1.30 AND 3-yr anniversary. At maturity if not converted and share &lt; conv: holder picks BTC repayment. Warrants forced at strike &times; 1.30. ATM issued linearly over the period at each month's share price × mNAV (not all on end price), only when mNAV &ge; floor. Share price linear-interp. Iterative solver (12 passes).
 </div>
 
 </div>
@@ -514,10 +517,17 @@ function solveCapitalStack(B0, BT, T, m, PT, floor, atmCap) {
       }
     });
 
-    let atmCash, atmShares, atmDisabled;
+   let atmCash, atmShares, atmDisabled;
     if (m >= floor && atmCap > 0) {
       atmCash = atmCap * 1e6;
-      atmShares = atmCash / Math.max(0.1, prevPrice * m);
+      // ATM is issued linearly over the period at each month's interpolated share price × mNAV
+      const cashPerMonth = atmCash / T;
+      atmShares = 0;
+      for (let mo = 1; mo <= T; mo++) {
+        const interpPrice = CURRENT_PRICE + (prevPrice - CURRENT_PRICE) * (mo / T);
+        const atmPriceAtMo = Math.max(0.1, interpPrice * m);
+        atmShares += cashPerMonth / atmPriceAtMo;
+      }
       atmDisabled = false;
     } else {
       atmCash = 0; atmShares = 0; atmDisabled = (m < floor);
