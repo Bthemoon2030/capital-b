@@ -149,7 +149,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-sats">0</div>
     <div class="cb-stat-label">Sats / share</div>
-    <div class="cb-stat-sub" id="r-sats-now">today ~722</div>
+    <div class="cb-stat-sub" id="r-sats-now">today ~732</div>
   </div>
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-shares">0M</div>
@@ -169,10 +169,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
     To reach the target Capital B will need <strong>additional instruments beyond what exists today</strong>; the model simulates this funding gap month-by-month, with new shares issued at each month's share price × mNAV.
   </div>
   <div style="font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 8px;">
-    <strong>mNAV ramps up linearly</strong> from today's implied level to your chosen value over the period. Cash inflows (warrants, ATM, future instruments) roll over between months and are spent when BTC is acquired.
-  </div>
-  <div style="font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 8px;">
-    <strong>BTC price follows the power law</strong> month-by-month. If you manually override the end price, only the final months are blended toward your value.
+    <strong>BTC price follows the power law</strong> (projections by <a href="https://twitter.com/Giovann35084111" target="_blank" style="color: #FFA94D; text-decoration: none;">@Giovann35084111</a>) — exponential path from today's price to the 31-12-2027 band target. Manual override blends into the final months.
   </div>
 </div>
 
@@ -195,6 +192,9 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
 
 <div class="cb-step">
   <div><span class="cb-step-num">2</span><span class="cb-step-title">Pick an mNAV</span></div>
+  <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 10px; margin-left: 30px; line-height: 1.6;">
+    <strong style="color: rgba(255,255,255,0.85);">How the model uses this:</strong> mNAV ramps up linearly from today's implied level to your chosen value over the period. Cash inflows (warrants, ATM, future instruments) roll over between months and are spent when BTC is acquired.
+  </div>
   <div class="cb-tgrid-mnav" style="margin-top: 12px;" id="mnavs"></div>
   <div class="cb-warn" id="mnav-warn">mNAV 20 is ~ like Hermes and Yves' bull case — speculative.</div>
   <div class="cb-row" style="margin-top: 12px;">
@@ -317,11 +317,14 @@ const CURRENT_BTC_PRICE = 67500;
 const USD_EUR = 1.08;
 const GENESIS = new Date('2009-01-03').getTime();
 const NOW_DATE = new Date('2026-05-13').getTime();
-const PL_EXP = 5.8, PL_A = 5.36e-18;
 const BASIC_SHARES = 275.9e6;
-const FULLY_DILUTED_SHARES = 407.5e6;
+const FULLY_DILUTED_SHARES = 401.7e6;
 const FORCED_MULT = 1.30;
 const TODAY_BTC = 2943;
+
+// BTC end-of-period 31-12-2027 prices in USD (power-law projections by @Giovann35084111)
+const BTC_END_USD = { bear: 100000, fair: 280000, bull: 900000 };
+const TARGET_END_DATE = new Date('2027-12-31').getTime();
 
 const WARRANTS = [
   { id: '2026-01', count: 27.4e6, strike: 1.01 },
@@ -357,14 +360,24 @@ const mnavOpts = [1, 2, 3, 4, 5, 6, 7, 8, 20];
 const STATE = { B0: TODAY_BTC, BT: 15000, T: 20, m: 3, PT: 100000, floor: 1.5, atmCap: 300, holderTrigger: 1.10, fixedDate: null };
 let band = 'fair', autoPrice = true, stackChart = null, activeTarget = '0-high';
 
-function btcPriceAtMonth(mo, bandMultVal) {
-  const days = (NOW_DATE + mo*30.44*86400000 - GENESIS) / 86400000;
-  const fairUSD = PL_A * Math.pow(days, PL_EXP);
-  return (fairUSD * bandMultVal) / USD_EUR;
+function btcEndPriceForBand(b) {
+  // End-of-FY26-27 price in EUR for given band
+  const usdEnd = b === 'bear' ? BTC_END_USD.bear : (b === 'bull' ? BTC_END_USD.bull : BTC_END_USD.fair);
+  return usdEnd / USD_EUR;
 }
 
-function bandMult(b) { return b === 'bear' ? 0.5 : b === 'bull' ? 3 : 1; }
-function pl(mo, b) { return btcPriceAtMonth(mo, bandMult(b)); }
+function btcPriceAtMonth(mo, b) {
+  // Exponential path from today's actual BTC price to the end-of-period band target.
+  // The end is the projected 31-12-2027 power-law value (@Giovann35084111).
+  // Total months from now to target end-date (31-12-2027):
+  const totalMonths = (TARGET_END_DATE - NOW_DATE) / (30.44 * 86400000);
+  const endPrice = btcEndPriceForBand(b);
+  if (totalMonths <= 0 || endPrice <= 0) return CURRENT_BTC_PRICE;
+  return CURRENT_BTC_PRICE * Math.pow(endPrice / CURRENT_BTC_PRICE, mo / totalMonths);
+}
+
+function bandMult(b) { return b === 'bear' ? 'bear' : b === 'bull' ? 'bull' : 'fair'; } // legacy compat; returns the band label
+function pl(mo, b) { return btcPriceAtMonth(mo, b); }
 
 function fmtPrice(n) {
   if (n >= 1e6) return '€' + (n/1e6).toFixed(1) + 'M';
@@ -472,7 +485,7 @@ function setManual() {
   document.getElementById('price-mode').className = 'mode man';
 }
 
-function simulate(B0, BT, T, m, floor, atmCap, btcBandMultVal, holderTrigger, sharePriceGuess, mnavTraj, btcPriceTraj) {
+function simulate(B0, BT, T, m, floor, atmCap, bandLabel, holderTrigger, sharePriceGuess, mnavTraj, btcPriceTraj) {
   // mnavTraj: array length T+1 of mNAV values per month (starts at current implied, ramps to target)
   // btcPriceTraj: array length T+1 of BTC prices per month (EUR)
   const btcStack = new Array(T + 1).fill(0);
@@ -608,17 +621,17 @@ function computeSharePriceTrajectory(sim, mnavTraj, btcPriceTraj) {
   return arr;
 }
 
-function buildBtcPriceTrajectory(T, baseBandMult, userPT) {
-  // BTC prices per month from power law.
-  // If userPT differs from power-law-end, only the endpoint is forced;
-  // earlier months are unchanged (no scaling of trajectory).
+function buildBtcPriceTrajectory(T, bandLabel, userPT) {
+  // BTC prices per month following exponential path from today's actual price
+  // to the band's 31-12-2027 end target.
   const arr = new Array(T + 1);
   for (let mo = 0; mo <= T; mo++) {
-    arr[mo] = btcPriceAtMonth(mo, baseBandMult);
+    arr[mo] = btcPriceAtMonth(mo, bandLabel);
   }
-  // If user manually set PT, replace the endpoint, leaving early months on power law
-  if (userPT && Math.abs(userPT - arr[T]) / arr[T] > 0.05) {
-    // Smoothly blend: keep early months on power-law, ramp the deviation in the last third
+  // If user manually set PT (different from band default), blend the endpoint
+  // into the last third of the trajectory.
+  const bandEnd = arr[T];
+  if (userPT && Math.abs(userPT - bandEnd) / bandEnd > 0.05) {
     const blendStart = Math.floor(T * 0.66);
     for (let mo = blendStart; mo <= T; mo++) {
       const blend = (mo - blendStart) / Math.max(1, T - blendStart);
@@ -640,8 +653,8 @@ function buildMnavTrajectory(T, targetMnav) {
   return arr;
 }
 
-function solveModel3(B0, BT, T, m, floor, atmCap, btcBandMultVal, holderTrigger, userPT) {
-  const btcPriceTraj = buildBtcPriceTrajectory(T, btcBandMultVal, userPT);
+function solveModel3(B0, BT, T, m, floor, atmCap, bandLabel, holderTrigger, userPT) {
+  const btcPriceTraj = buildBtcPriceTrajectory(T, bandLabel, userPT);
   const mnavTraj = buildMnavTrajectory(T, m);
 
   // Initial guess for share price trajectory
@@ -654,7 +667,7 @@ function solveModel3(B0, BT, T, m, floor, atmCap, btcBandMultVal, holderTrigger,
 
   let sim = null;
   for (let iter = 0; iter < 25; iter++) {
-    sim = simulate(B0, BT, T, m, floor, atmCap, btcBandMultVal, holderTrigger, sharePriceGuess, mnavTraj, btcPriceTraj);
+    sim = simulate(B0, BT, T, m, floor, atmCap, bandLabel, holderTrigger, sharePriceGuess, mnavTraj, btcPriceTraj);
     const newTrajectory = computeSharePriceTrajectory(sim, mnavTraj, btcPriceTraj);
 
     const oldEnd = sharePriceGuess[T];
@@ -677,10 +690,7 @@ function compute() {
   if (BT <= B0 || T <= 0 || m <= 0 || B0 <= 0) return;
   updatePriceLabel();
 
-  // Use the base band multiplier directly; userPT is now an endpoint override only
-  const baseBandMult = bandMult(band);
-
-  const { sim, sharePriceTrajectory } = solveModel3(B0, BT, T, m, floor, atmCap, baseBandMult, holderTrigger, PT);
+  const { sim, sharePriceTrajectory } = solveModel3(B0, BT, T, m, floor, atmCap, band, holderTrigger, PT);
 
   const finalShares = sim.sharesOutstanding[T];
   const finalBTC = sim.btcStack[T];
