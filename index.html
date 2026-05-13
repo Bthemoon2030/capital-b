@@ -304,7 +304,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
 <div class="cb-nfa">NFA of course, just math — <a href="https://twitter.com/Bthemoon2030" target="_blank">@Bthemoon2030</a></div>
 
 <div class="cb-caveat">
-  Focused on the 20-month horizon (today through end of 2027) where Capital B's current capital stack is most relevant. BTC price follows the Santostasi power law per month. BTC accumulation assumed linear. Each month: cash inflows (warrants exercised when share ≥ strike × 1.30; ATM if mNAV ≥ floor and cap not exhausted; filler instruments if cash gap remains) buy BTC at that month's BTC price. Share price = (BTC stack × BTC price × mNAV) / shares outstanding, computed iteratively for convergence. OCAs convert when share ≥ conv × holder-trigger; only Moonlight (B-03) still has original gates so its holder needs share ≥ conv to convert voluntarily. Per-tranche BTC allocation per CEBE Tracker estimates.
+  Focused on the 20-month horizon (today through end of 2027) where Capital B's current capital stack is most relevant. BTC price follows an exponential path from today's actual price to the band's 31-12-2027 power-law projection (@Giovann35084111). BTC accumulation assumed linear. Each month: cash inflows (warrants exercised when share ≥ strike × 1.30; ATM if mNAV ≥ floor and cap not exhausted; filler instruments if cash gap remains) buy BTC at that month's BTC price. Share price = (BTC stack × BTC price × mNAV) / shares outstanding, computed iteratively for convergence. OCAs convert when share ≥ conv × holder-trigger; only Moonlight (B-03) still has original gates so its holder needs share ≥ conv to convert voluntarily. Per-tranche BTC allocation per CEBE Tracker estimates.
 </div>
 
 </div>
@@ -322,8 +322,9 @@ const FULLY_DILUTED_SHARES = 401.7e6;
 const FORCED_MULT = 1.30;
 const TODAY_BTC = 2943;
 
-// BTC end-of-period 31-12-2027 prices in USD (power-law projections by @Giovann35084111)
-const BTC_END_USD = { bear: 100000, fair: 280000, bull: 900000 };
+// BTC end-of-period 31-12-2027 prices in EUR (power-law projections by @Giovann35084111)
+// Power law formula: P_USD = 10^(-17.3) * days^5.82, converted to EUR /1.08, rounded to nearest 1K.
+const BTC_END_EUR = { bear: 105000, fair: 188000, bull: 409000 };
 const TARGET_END_DATE = new Date('2027-12-31').getTime();
 
 const WARRANTS = [
@@ -361,9 +362,8 @@ const STATE = { B0: TODAY_BTC, BT: 15000, T: 20, m: 3, PT: 100000, floor: 1.5, a
 let band = 'fair', autoPrice = true, stackChart = null, activeTarget = '0-high';
 
 function btcEndPriceForBand(b) {
-  // End-of-FY26-27 price in EUR for given band
-  const usdEnd = b === 'bear' ? BTC_END_USD.bear : (b === 'bull' ? BTC_END_USD.bull : BTC_END_USD.fair);
-  return usdEnd / USD_EUR;
+  // End-of-FY26-27 (31-12-2027) price in EUR for given band
+  return b === 'bear' ? BTC_END_EUR.bear : (b === 'bull' ? BTC_END_EUR.bull : BTC_END_EUR.fair);
 }
 
 function btcPriceAtMonth(mo, b) {
