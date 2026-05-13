@@ -184,7 +184,10 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
     <span class="lbl" id="price-label">BTC price on —</span>
     <span class="mode" id="price-mode">auto: fair</span>
     <input type="number" class="cb-input" id="i-pt" value="100000" />
-    </div>
+  </div>
+  <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 10px; line-height: 1.6;">
+    BTC price follows the power law (projections by <a href="https://twitter.com/Giovann35084111" target="_blank" style="color: #FFA94D; text-decoration: none;">@Giovann35084111</a>).
+  </div>
 </div>
 
 <div class="cb-step">
@@ -351,7 +354,7 @@ const OCA_SHARES = {
 };
 
 const targets = [
-  { y: 'FY26-27', low: 7000, high: 15000, mo: 20, endYear: 2027 },
+  { y: 'FY26-27', low: 7000, high: 15000, mo: 19, endYear: 2027 },
 ];
 
 const mnavOpts = [1, 2, 3, 4, 5, 6, 7, 8, 20];
@@ -543,7 +546,8 @@ function simulate(B0, BT, T, m, floor, atmCap, bandLabel, holderTrigger, sharePr
         ocasConverted[mo] += o.sharesAdded;
         return;
       }
-      if (!o.gatesRemoved && sp >= o.convPrice * holderTrigger) {
+      if (!o.gatesRemoved && sp >= o.convPrice) {
+        // Original contract terms: holder converts at share >= conv price (no extra buffer required)
         o.status = 'converted'; o.conversionMo = mo;
         o.sharesAdded = OCA_SHARES[o.id] || 0;
         sharesOutstanding[mo] += o.sharesAdded;
@@ -571,8 +575,10 @@ function simulate(B0, BT, T, m, floor, atmCap, bandLabel, holderTrigger, sharePr
     let cashNeededThisMo = btcNeededThisMo * btcPrice;
 
     // 4. ATM contribution this month — opportunistic when mNAV >= floor
-    // ATM contributes up to its monthly pro-rata share of remaining cap
-    if (mThis >= floor && atmCapRemaining > 0) {
+    // ATM pauses if treasury already holds enough cash for 2+ months of BTC needs
+    // (avoid issuing dilutive shares when cash isn't needed)
+    const treasuryBuffer = cashNeededThisMo * 2;
+    if (mThis >= floor && atmCapRemaining > 0 && cashTreasury < treasuryBuffer) {
       const remainingMonths = T - mo + 1;
       const atmCashThisMo = Math.min(atmCapRemaining, atmCapRemaining / remainingMonths);
       const atmPrice = Math.max(0.1, sp * mThis);
@@ -756,7 +762,11 @@ function renderOCAs(ocaState) {
     const s = sm[o.status];
     let timing = '';
     if (o.status === 'converted' || o.status === 'forced') timing = `${o.status === 'forced' ? 'forced' : 'voluntary'}`;
-    else if (o.status === 'pending') timing = `await €${(o.convPrice * HT).toFixed(2)} share`;
+    else if (o.status === 'pending') {
+      // For gates-removed OCAs, holder uses trigger multiplier. For original gates (B-03), uses raw conv price.
+      const awaitPrice = o.gatesRemoved ? o.convPrice * HT : o.convPrice;
+      timing = `await €${awaitPrice.toFixed(2)} share`;
+    }
     else timing = `at maturity`;
     const claimLine = o.status === 'btcpay' ? Math.round(o.btcRepayBT) + ' ₿' : Math.round(o.btcClaim) + ' ₿';
     const note = o.status === 'btcpay' ? 'BTC paid' : (o.sharesAdded > 0 ? (o.sharesAdded/1e6).toFixed(1) + 'M shares' : 'claim active');
