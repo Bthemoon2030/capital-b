@@ -172,8 +172,8 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
 <div style="background: rgba(255,169,77,0.08); border: 0.5px solid rgba(255,169,77,0.3); border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; line-height: 1.55;">
   <div style="font-size: 11px; color: #FFA94D; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; font-weight: 500;">⚠ Important</div>
   <div style="font-size: 13px; color: #fff;">
-    This model only includes <strong>what is known today</strong>: existing warrants, OCAs and the TOBAM ATM facility. It does not factor in future new instruments or future agreements Capital B may enter into.
-  </div>
+    To reach the target, Capital B will need <strong>additional instruments beyond what exists today</strong>. The model estimates this funding gap and assumes it's filled at share price × mNAV (similar to ATM issuance). Real future instruments may dilute more or less than estimated.
+</div>
   <div style="font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 8px;">
     <strong>mNAV is assumed constant</strong> across the entire period. In reality mNAV fluctuates with market sentiment — sometimes premium expansion, sometimes compression. The model uses your chosen mNAV as the average.
   </div>
@@ -533,11 +533,24 @@ function solveCapitalStack(B0, BT, T, m, PT, floor, atmCap) {
       atmCash = 0; atmShares = 0; atmDisabled = (m < floor);
     }
 
-    const finalShares = BASIC_SHARES + warrantsExercised + ocaInfo.totalConvertedShares + atmShares;
+    const sharesBeforeFiller = BASIC_SHARES + warrantsExercised + ocaInfo.totalConvertedShares + atmShares;
     const effectiveBT = BT - ocaInfo.btcRepayClaim;
+
+    // Funding gap: how many BTC can existing instruments fund vs what's needed
+    const grossBTCNeeded = (BT - B0) + ocaInfo.btcRepayClaim;
+    const cashAvailable = warrantCash + atmCash;
+    const btcFundable = cashAvailable / PT;
+    const btcGap = Math.max(0, grossBTCNeeded - btcFundable);
+    const cashGap = btcGap * PT;
+
+    // Filler: assume future instruments issue shares at endPrice × mNAV (same as ATM)
+    const fillerSharePrice = Math.max(0.1, prevPrice * m);
+    const fillerShares = cashGap / fillerSharePrice;
+
+    const finalShares = sharesBeforeFiller + fillerShares;
     const sharePrice = (effectiveBT * PT * m) / finalShares;
     const outstandingClaim = ocaInfo.results.reduce((sum, o) => o.status === 'pending' ? sum + o.btcClaim : sum, 0);
-    result = { warrantsExercised, warrantCash, atmShares, atmCash, finalShares, sharePrice, ocaInfo, atmDisabled, outstandingClaim };
+    rresult = { warrantsExercised, warrantCash, atmShares, atmCash, finalShares, sharePrice, ocaInfo, atmDisabled, outstandingClaim, fillerShares, btcGap, cashGap };
     if (Math.abs(sharePrice - prevPrice) / prevPrice < 0.0005) break;
     prevPrice = sharePrice;
   }
@@ -627,6 +640,7 @@ function renderStack(r) {
     { c: '#FF5C00', l: 'Warrants exercised', s: 'in-the-money', n: r.warrantsExercised },
     { c: '#9966cc', l: 'OCAs converted', s: 'eliminates claim', n: r.ocaInfo.totalConvertedShares },
     { c: '#5DCAA5', l: 'ATM issuance', s: r.atmDisabled ? 'DISABLED' : 'at share × mNAV', n: r.atmShares },
+     { c: '#FFA94D', l: 'Future instruments', s: 'fills funding gap @ share × mNAV', n: r.fillerShares },
   ];
   let html = rows.map(rr => `<div class="cb-stack-row"><div class="src" style="background:${rr.c}"></div><div class="lbl">${rr.l}<small>${rr.s}</small></div><div class="v">${(rr.n/1e6).toFixed(1)}M <span style="color:rgba(255,255,255,0.4);font-size:10px;">(${(rr.n/total*100).toFixed(0)}%)</span></div></div>`).join('');
   html += `<div class="cb-stack-row total"><div class="src" style="opacity:0;"></div><div class="lbl">Total diluted shares</div><div class="v">${(total/1e6).toFixed(1)}M</div></div>`;
