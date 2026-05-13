@@ -201,7 +201,10 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
 
 <div class="cb-step">
   <div><span class="cb-step-num">4</span><span class="cb-step-title">OCA conversion trigger</span></div>
-  <div class="cb-step-hint">When holders voluntarily convert their BTC-denominated debt to shares</div>
+ <div class="cb-step-hint">When holders voluntarily convert their BTC-denominated debt to shares</div>
+<div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 10px; margin-left: 30px; line-height: 1.6;">
+  <strong style="color: rgba(255,255,255,0.85);">What changing this means:</strong> A <strong>lower trigger</strong> (1.00× aggressive) means holders convert as soon as they're in-the-money. More shares get issued earlier, debt disappears from the balance sheet faster, but dilution hits harder. A <strong>higher trigger</strong> (1.50× patient) means holders sit on their BTC-denominated debt longer. Less dilution now, but if share price never reaches the trigger, the OCA goes to maturity and Capital B may have to repay holders in BTC — shrinking the stack. For shareholders: lower trigger = more shares, smaller drag. Higher trigger = fewer shares, but BTC repayment risk.
+</div>
   <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px; margin-top: 12px;">
     <div class="cb-slider-row">
       <div class="cb-slider-label">
@@ -232,7 +235,11 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
 </div>
 
 <div class="cb-step">
-  <div><span class="cb-step-num">6</span><span class="cb-step-title">ATM (TOBAM €300M)</span></div>
+<div><span class="cb-step-num">6</span><span class="cb-step-title">ATM (TOBAM €300M)</span></div>
+<div class="cb-step-hint">When Capital B taps the at-the-market facility to issue new shares for cash</div>
+<div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 10px; margin-left: 30px; line-height: 1.6;">
+  <strong style="color: rgba(255,255,255,0.85);">What changing this means:</strong> The <strong>mNAV floor</strong> is the minimum premium at which Capital B is willing to issue new shares. Below this floor, no ATM happens — shareholders are protected from dilution at low premiums. Above it, Capital B issues up to the cap. <strong>Raising the floor</strong> = fewer ATM shares = less dilution but less BTC bought. <strong>Lowering the floor</strong> = more aggressive issuance = more BTC accumulated but more dilution. The <strong>cap remaining</strong> sets the maximum euros Capital B can raise this way. Each ATM-issued share is created at share price × mNAV (you sell into the premium), so a high mNAV produces fewer new shares per euro raised — this is the flywheel everyone talks about.
+</div>
   <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px; margin-top: 12px;">
     <div class="cb-slider-row">
       <div class="cb-slider-label">
