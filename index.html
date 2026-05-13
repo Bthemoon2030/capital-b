@@ -550,7 +550,7 @@ function solveCapitalStack(B0, BT, T, m, PT, floor, atmCap) {
     const finalShares = sharesBeforeFiller + fillerShares;
     const sharePrice = (effectiveBT * PT * m) / finalShares;
     const outstandingClaim = ocaInfo.results.reduce((sum, o) => o.status === 'pending' ? sum + o.btcClaim : sum, 0);
-    rresult = { warrantsExercised, warrantCash, atmShares, atmCash, finalShares, sharePrice, ocaInfo, atmDisabled, outstandingClaim, fillerShares, btcGap, cashGap };
+    result = { warrantsExercised, warrantCash, atmShares, atmCash, finalShares, sharePrice, ocaInfo, atmDisabled, outstandingClaim, fillerShares, btcGap, cashGap };
     if (Math.abs(sharePrice - prevPrice) / prevPrice < 0.0005) break;
     prevPrice = sharePrice;
   }
