@@ -560,7 +560,7 @@ function renderWarrants(sp) {
   document.getElementById('warrants-detail').innerHTML = WARRANTS.map(w => {
     const trigger = w.strike * FORCED_MULT;
     const inMoney = sp >= trigger;
-    return `<div class="cb-tranche-row"><div class="tag">${w.id}</div><div class="info">€${w.strike.toFixed(2)} strike<small>trigger €${trigger.toFixed(2)}</small></div><div class="count">${(w.count/1e6).toFixed(1)}M</div><div class="status ${inMoney ? 'exer' : 'out'}">${inMoney ? 'will exercise' : 'not yet'}</div></div>`;
+    return `<div class="cb-tranche-row"><div class="tag">${w.id}</div><div class="info">€${w.strike.toFixed(2)} strike<small>trigger €${trigger.toFixed(2)}</small></div><div class="count">${(w.count/1e6).toFixed(1)}M</div><div class="status ${inMoney ? 'exer' : 'out'}">${inMoney ? 'should exercise' : 'not yet'}</div></div>`;
   }).join('');
 }
 
