@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Capital B Projection — Model 3</title>
-<meta name="description" content="Projection model for Capital B (ALCPB). Month-by-month simulation of warrants, OCAs, ATM and future issuance.">
+<meta name="description" content="Interactive projection model for Capital B (ALCPB). Month-by-month simulation of warrants, OCAs, ATM and future issuance.">
 
 <meta property="og:title" content="Capital B Projection — Model 3">
 <meta property="og:description" content="Month-by-month capital stack simulation. Model and formula by @Bthemoon2030.">
@@ -210,7 +210,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
   <div><span class="cb-step-num">4</span><span class="cb-step-title">OCA conversion trigger</span></div>
   <div class="cb-step-hint">When holders voluntarily convert their BTC-denominated debt to shares</div>
   <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 10px; margin-left: 30px; line-height: 1.6;">
-    <strong style="color: rgba(255,255,255,0.85);">What changing this means:</strong> Share count from conversion is fixed — what changes is <strong>when</strong> holders convert and <strong>whether</strong> they convert at all. Higher trigger = more BTC repayment risk if share price never reaches it.
+    <strong style="color: rgba(255,255,255,0.85);">What changing this means:</strong> Share count from conversion is fixed — what changes is <strong>when</strong> holders convert and <strong>whether</strong> they convert at all. Higher trigger = claim stays outstanding longer.
   </div>
   <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px; margin-top: 12px;">
     <div class="cb-slider-row">
@@ -446,7 +446,7 @@ function updateTriggerExplainer() {
   if (v <= 1.05) label = "Holders convert immediately when in-the-money. Aggressive.";
   else if (v <= 1.15) label = "Holders convert with a small premium buffer (rational economic behavior).";
   else if (v <= 1.35) label = "Holders wait near forced-conversion levels. Conservative.";
-  else label = "Patient holders wait significantly above conv price. Triggers BTC repayment risk at maturity.";
+  else label = "Patient holders wait significantly above conv price. Claim stays outstanding past 2027.";
   document.getElementById('trigger-explainer').textContent = `Holders convert when share ≥ conv × ${v.toFixed(2)}. ${label}`;
   ['tp-1','tp-2','tp-3','tp-4'].forEach((id, i) => {
     document.getElementById(id).classList.toggle('active', Math.abs([1.00, 1.10, 1.30, 1.50][i] - v) < 0.01);
