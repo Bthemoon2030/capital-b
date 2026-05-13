@@ -543,9 +543,16 @@ function solveCapitalStack(B0, BT, T, m, PT, floor, atmCap) {
     const btcGap = Math.max(0, grossBTCNeeded - btcFundable);
     const cashGap = btcGap * PT;
 
-    // Filler: assume future instruments issue shares at endPrice × mNAV (same as ATM)
-    const fillerSharePrice = Math.max(0.1, prevPrice * m);
-    const fillerShares = cashGap / fillerSharePrice;
+   // Filler: future instruments issued linearly over the period at each month's share price × mNAV
+    let fillerShares = 0;
+    if (cashGap > 0) {
+      const cashGapPerMonth = cashGap / T;
+      for (let mo = 1; mo <= T; mo++) {
+        const interpPrice = CURRENT_PRICE + (prevPrice - CURRENT_PRICE) * (mo / T);
+        const fillerPriceAtMo = Math.max(0.1, interpPrice * m);
+        fillerShares += cashGapPerMonth / fillerPriceAtMo;
+      }
+    }
 
     const finalShares = sharesBeforeFiller + fillerShares;
     const sharePrice = (effectiveBT * PT * m) / finalShares;
