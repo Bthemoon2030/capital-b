@@ -173,6 +173,16 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
 <div class="cb-step">
   <div><span class="cb-step-num">1</span><span class="cb-step-title">Pick a target</span></div>
   <div class="cb-tgrid" style="margin-top: 12px;" id="targets"></div>
+  <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px; margin-top: 10px;">
+    <div class="cb-slider-row">
+      <div class="cb-slider-label">
+        <span>Custom BTC target</span>
+        <input type="number" class="cb-slider-input" id="t-bt-i" value="15000" step="500" min="3000" style="width: 80px;" />
+        <span class="cb-slider-unit">₿</span>
+      </div>
+      <input type="range" class="cb-slider" id="t-bt" min="3000" max="15000" value="15000" step="500" />
+    </div>
+  </div>
   <div class="cb-divider"></div>
   <div style="font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px;">BTC price band (power law)</div>
   <div class="cb-band-row">
@@ -468,6 +478,8 @@ function loadT(i, which) {
   STATE.BT = which === 'low' ? t.low : t.high;
   STATE.T = t.mo;
   STATE.fixedDate = '31-12-' + t.endYear;
+  document.getElementById('t-bt').value = STATE.BT;
+  document.getElementById('t-bt-i').value = STATE.BT;
   autoPrice = true;
   document.getElementById('price-mode').textContent = 'auto: ' + ({bear:'base',fair:'fair',bull:'top'})[band];
   document.getElementById('price-mode').className = 'mode';
@@ -863,6 +875,24 @@ fi.addEventListener('input', e => { if (e.target.value === '' || isNaN(+e.target
 const as = document.getElementById('a-atm'), ai = document.getElementById('a-atm-i');
 as.addEventListener('input', e => { STATE.atmCap = +e.target.value; ai.value = e.target.value; compute(); });
 ai.addEventListener('input', e => { if (e.target.value === '' || isNaN(+e.target.value)) return; STATE.atmCap = +e.target.value; if (+e.target.value > +as.max) as.max = +e.target.value; as.value = e.target.value; compute(); });
+
+const bts = document.getElementById('t-bt'), bti = document.getElementById('t-bt-i');
+bts.addEventListener('input', e => {
+  STATE.BT = +e.target.value;
+  bti.value = e.target.value;
+  activeTarget = 'custom';
+  renderTargets();
+  compute();
+});
+bti.addEventListener('input', e => {
+  if (e.target.value === '' || isNaN(+e.target.value)) return;
+  STATE.BT = +e.target.value;
+  if (+e.target.value > +bts.max) bts.max = +e.target.value;
+  bts.value = e.target.value;
+  activeTarget = 'custom';
+  renderTargets();
+  compute();
+});
 
 renderTargets();
 renderMnavs();
