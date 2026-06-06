@@ -142,19 +142,20 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
   <div class="cb-hero-label">Projected share price</div>
   <div class="cb-hero-num" id="r-price">€0.00</div>
   <div class="cb-hero-date" id="r-date">on —</div>
-  <div class="cb-hero-mult" id="r-mult">vs €0.64 today</div>
+  <div class="cb-hero-mult" id="r-mult" style="display:none;">vs €0.64 today</div>
+  <div id="r-live" style="font-size: 10px; color: rgba(255,255,255,0.45); margin-top: 6px;">loading live price…</div>
 </div>
 
 <div class="cb-stat-grid-3">
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-sats">0</div>
     <div class="cb-stat-label">Sats / share</div>
-    <div class="cb-stat-sub" id="r-sats-now">today ~732</div>
+    <div class="cb-stat-sub" id="r-sats-now">today ~734</div>
   </div>
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-shares">0M</div>
     <div class="cb-stat-label">Final shares</div>
-    <div class="cb-stat-sub" id="r-share-mult">— vs 276M</div>
+    <div class="cb-stat-sub" id="r-share-mult">— vs 301M</div>
   </div>
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-drag">0%</div>
@@ -288,7 +289,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
     <div class="cb-drag-bar"><div class="cb-drag-fill" id="drag-fill" style="width:36%;"></div></div>
     <div class="cb-drag-row">
       <span id="drag-claim">1,060 ₿ claimed</span>
-      <span id="drag-free">of 2,943 ₿ total</span>
+      <span id="drag-free">of 3,139 ₿ total</span>
     </div>
     <div class="cb-drag-source">
       The "drag" concept and BTC claim staircase framework comes from <a href="https://cebetracker.io/insights/capitalb-finish-the-math/" target="_blank">CEBE Tracker — Finish the Math: Capital B</a> by Bobby Tierney. Highly recommended reading.
@@ -319,15 +320,15 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const CURRENT_PRICE = 0.64;
-const CURRENT_BTC_PRICE = 67500;
+let CURRENT_PRICE = 0.64;       // live-overridden by fetchLivePrices() (Yahoo via CORS proxy)
+let CURRENT_BTC_PRICE = 67500;  // live-overridden by fetchLivePrices() (CoinGecko)
 const USD_EUR = 1.08;
 const GENESIS = new Date('2009-01-03').getTime();
 const NOW_DATE = new Date('2026-05-13').getTime();
-const BASIC_SHARES = 275.9e6;
-const FULLY_DILUTED_SHARES = 401.7e6;
+let BASIC_SHARES = 300.7e6;          // live-overridable
+let FULLY_DILUTED_SHARES = 427.5e6;  // live-overridable
 const FORCED_MULT = 1.30;
-const TODAY_BTC = 2943;
+let TODAY_BTC = 3139;                // live-overridable
 
 // BTC end-of-period 31-12-2027 prices in EUR (power-law projections by @Giovann35084111)
 // Power law formula: P_USD = 10^(-17.3) * days^5.82, converted to EUR /1.08, rounded to nearest 1K.
@@ -367,6 +368,7 @@ const targets = [
 const mnavOpts = [1, 2, 3, 4, 5, 6, 7, 8, 20];
 const STATE = { B0: TODAY_BTC, BT: 15000, T: 20, m: 3, PT: 100000, floor: 1.5, atmCap: 300, holderTrigger: 1.30, fixedDate: null };
 let band = 'fair', autoPrice = true, stackChart = null, activeTarget = '0-high';
+let isSharePriceLive = false; // true once ALCPB live fetch succeeds; gates the "× vs €X today" multiplier line
 
 function btcEndPriceForBand(b) {
   // End-of-FY26-27 (31-12-2027) price in EUR for given band
@@ -716,11 +718,17 @@ function compute() {
   const atmDisabled = (m < floor);
 
   document.getElementById('r-price').textContent = finalSharePrice >= 1000 ? '€' + Math.round(finalSharePrice).toLocaleString('en-US') : '€' + finalSharePrice.toFixed(2);
-  document.getElementById('r-mult').textContent = (finalSharePrice/CURRENT_PRICE).toFixed(1) + '× vs €0.64 today';
+  const rMult = document.getElementById('r-mult');
+  if (isSharePriceLive) {
+    rMult.textContent = (finalSharePrice/CURRENT_PRICE).toFixed(1) + '× vs €' + CURRENT_PRICE.toFixed(2) + ' today';
+    rMult.style.display = '';
+  } else {
+    rMult.style.display = 'none';
+  }
   document.getElementById('r-sats').textContent = Math.round(sats).toLocaleString('en-US');
   document.getElementById('r-sats-now').textContent = 'today ~' + Math.round(satsNow);
   document.getElementById('r-shares').textContent = Math.round(finalShares / 1e6) + 'M';
-  document.getElementById('r-share-mult').textContent = (finalShares/BASIC_SHARES).toFixed(2) + '× vs 276M';
+  document.getElementById('r-share-mult').textContent = (finalShares/BASIC_SHARES).toFixed(2) + '× vs ' + Math.round(BASIC_SHARES/1e6) + 'M';
   document.getElementById('r-drag').textContent = drag.toFixed(1) + '%';
   document.getElementById('r-drag-bt').textContent = Math.round(outstandingClaim).toLocaleString('en-US') + ' ₿ claim';
 
@@ -800,7 +808,7 @@ function renderStack(sim, finalShares, atmDisabled) {
   const fillerTotal = sim.fillerIssued[T];
 
   const rows = [
-    { c: '#666', l: 'Basic shares', s: '275.9M, fixed', n: BASIC_SHARES },
+    { c: '#666', l: 'Basic shares', s: (BASIC_SHARES/1e6).toFixed(1) + 'M, fixed', n: BASIC_SHARES },
     { c: '#FF5C00', l: 'Warrants exercised', s: 'in-the-money', n: warrantTotal },
     { c: '#9966cc', l: 'OCAs converted', s: 'eliminates claim', n: ocaTotal },
     { c: '#5DCAA5', l: 'ATM issuance', s: atmDisabled ? 'DISABLED' : 'at share × mNAV', n: atmTotal },
@@ -900,6 +908,71 @@ setBand('fair');
 loadT(0, 'high');
 setMnav(3, 2);
 updateTriggerExplainer();
+
+// --- Live price fetch ---------------------------------------------------------
+// BTC/EUR via CoinGecko (CORS-friendly, no key).
+// ALCPB.PA via Yahoo Finance through a public CORS proxy (corsproxy.io).
+// Falls back to the hardcoded CURRENT_PRICE / CURRENT_BTC_PRICE on any failure.
+async function fetchLivePrices() {
+  let shareSrc = null, btcSrc = null;
+
+  try {
+    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=eur');
+    if (r.ok) {
+      const j = await r.json();
+      if (j && j.bitcoin && j.bitcoin.eur > 0) {
+        CURRENT_BTC_PRICE = j.bitcoin.eur;
+        btcSrc = 'CoinGecko';
+      }
+    }
+  } catch (e) { /* keep fallback */ }
+
+  // Strategy: try Stooq direct (CORS-friendly, no proxy), then Yahoo via several proxies.
+  // Free CORS proxies frequently block Yahoo Finance, so multiple fallbacks help.
+  const yahooUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/ALCPB.PA?interval=1d&range=1d';
+  const sources = [
+    { name: 'Stooq', url: 'https://stooq.com/q/l/?s=alcpb.fr&f=sd2t2ohlcv&h&e=csv', kind: 'csv' },
+    { name: 'Yahoo (corsproxy.io)', url: 'https://corsproxy.io/?' + encodeURIComponent(yahooUrl), kind: 'yahoo' },
+    { name: 'Yahoo (allorigins)', url: 'https://api.allorigins.win/raw?url=' + encodeURIComponent(yahooUrl), kind: 'yahoo' },
+    { name: 'Yahoo (corsproxy.org)', url: 'https://corsproxy.org/?' + encodeURIComponent(yahooUrl), kind: 'yahoo' },
+  ];
+
+  for (const s of sources) {
+    try {
+      const r = await fetch(s.url);
+      if (!r.ok) continue;
+      if (s.kind === 'csv') {
+        const txt = (await r.text()).trim();
+        // CSV: Symbol,Date,Time,Open,High,Low,Close,Volume → take Close (col 6)
+        const lines = txt.split('\n').filter(l => l && !l.toLowerCase().startsWith('symbol'));
+        if (!lines.length) continue;
+        const cols = lines[0].split(',');
+        const close = parseFloat(cols[6]);
+        if (close > 0) { CURRENT_PRICE = close; shareSrc = s.name; break; }
+      } else {
+        const j = await r.json();
+        const p = j && j.chart && j.chart.result && j.chart.result[0] && j.chart.result[0].meta && j.chart.result[0].meta.regularMarketPrice;
+        if (p > 0) { CURRENT_PRICE = p; shareSrc = s.name; break; }
+      }
+    } catch (e) { /* try next */ }
+  }
+
+  if (shareSrc) isSharePriceLive = true;
+
+  const liveEl = document.getElementById('r-live');
+  if (shareSrc || btcSrc) {
+    const parts = [];
+    if (shareSrc) parts.push('ALCPB €' + CURRENT_PRICE.toFixed(2));
+    if (btcSrc) parts.push('BTC €' + Math.round(CURRENT_BTC_PRICE).toLocaleString('en-US'));
+    liveEl.textContent = '● live · ' + parts.join(' · ');
+    liveEl.style.color = '#5DCAA5';
+    updatePrice(); // recomputes BTC trajectory + STATE.PT + re-runs compute()
+  } else {
+    liveEl.style.display = 'none'; // niets tonen bij gefaalde feed
+  }
+}
+
+fetchLivePrices();
 </script>
 
 </body>
