@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BTCTC Simulator â€” Bitcoin Treasury Company projection</title>
-<meta name="description" content="Project any Bitcoin Treasury Company forward in time. Inputs â†’ NAV, mNAV, share price, sats per share, and a month-by-month projection table.">
+<title>BTCTC Simulator — Bitcoin Treasury Company projection</title>
+<meta name="description" content="Project any Bitcoin Treasury Company forward in time. Inputs → NAV, mNAV, share price, sats per share, and a month-by-month projection table.">
 <meta property="og:title" content="BTCTC Simulator">
-<meta property="og:description" content="Bitcoin Treasury Company projection model. Inputs â†’ outputs in one screen.">
+<meta property="og:description" content="Bitcoin Treasury Company projection model. Inputs → outputs in one screen.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@Bthemoon2030">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='25,5 75,5 100,50 75,95 25,95 0,50' fill='%23FF5C00'/><text x='50' y='65' font-family='sans-serif' font-size='50' font-weight='500' text-anchor='middle' fill='%230a0a0a'>B</text></svg>">
@@ -91,22 +91,22 @@ table.cb-table td.split { color: #FF8A3D; }
 <!-- HERO: projected share price -->
 <div class="cb-hero">
   <div class="cb-hero-label">Projected share price at end of period</div>
-  <div class="cb-hero-num" id="r-price">â€”</div>
-  <div class="cb-hero-sub" id="r-price-sub">â€”</div>
+  <div class="cb-hero-num" id="r-price">—</div>
+  <div class="cb-hero-sub" id="r-price-sub">—</div>
 </div>
 
 <!-- KEY METRICS -->
 <div class="cb-step">
   <div><span class="cb-step-num">1</span><span class="cb-step-title">Key metrics at end of period</span></div>
   <div class="cb-stat-grid">
-    <div class="cb-card"><div class="v" id="m-nav">â€”</div><div class="l">NAV</div><div class="s">treasury Ã— BTC price</div></div>
-    <div class="cb-card"><div class="v" id="m-mc">â€”</div><div class="l">Implied market cap</div><div class="s">NAV Ã— mNAV</div></div>
-    <div class="cb-card"><div class="v" id="m-shares">â€”</div><div class="l">Fully diluted shares</div><div class="s" id="m-shares-mult">â€”</div></div>
-    <div class="cb-card"><div class="v" id="m-sats">â€”</div><div class="l">Sats / share</div><div class="s" id="m-sats-mult">â€”</div></div>
-    <div class="cb-card"><div class="v" id="m-stack">â€”</div><div class="l">BTC stack</div><div class="s" id="m-stack-delta">â€”</div></div>
-    <div class="cb-card"><div class="v" id="m-mnav">â€”</div><div class="l">mNAV future</div><div class="s">your input</div></div>
-    <div class="cb-card"><div class="v" id="m-months">â€”</div><div class="l">Months ahead</div><div class="s" id="m-months-date">â€”</div></div>
-    <div class="cb-card" style="border-color: rgba(255,92,0,0.35); background: rgba(255,92,0,0.06);"><div class="v" id="m-dilution">â€”</div><div class="l">Needed monthly dilution</div><div class="s" id="m-dilution-ann">â€”</div></div>
+    <div class="cb-card"><div class="v" id="m-nav">—</div><div class="l">NAV</div><div class="s">treasury × BTC price</div></div>
+    <div class="cb-card"><div class="v" id="m-mc">—</div><div class="l">Implied market cap</div><div class="s">NAV × mNAV</div></div>
+    <div class="cb-card"><div class="v" id="m-shares">—</div><div class="l">Fully diluted shares</div><div class="s" id="m-shares-mult">—</div></div>
+    <div class="cb-card"><div class="v" id="m-sats">—</div><div class="l">Sats / share</div><div class="s" id="m-sats-mult">—</div></div>
+    <div class="cb-card"><div class="v" id="m-stack">—</div><div class="l">BTC stack</div><div class="s" id="m-stack-delta">—</div></div>
+    <div class="cb-card"><div class="v" id="m-mnav">—</div><div class="l">mNAV future</div><div class="s">your input</div></div>
+    <div class="cb-card"><div class="v" id="m-months">—</div><div class="l">Months ahead</div><div class="s" id="m-months-date">—</div></div>
+    <div class="cb-card" style="border-color: rgba(255,92,0,0.35); background: rgba(255,92,0,0.06);"><div class="v" id="m-dilution">—</div><div class="l">Needed monthly dilution</div><div class="s" id="m-dilution-ann">—</div></div>
   </div>
 </div>
 
@@ -117,7 +117,7 @@ table.cb-table td.split { color: #FF8A3D; }
 
   <div style="display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 10px 12px; background: rgba(255,92,0,0.06); border: 0.5px solid rgba(255,92,0,0.2); border-radius: 8px;">
     <span style="font-size: 11px; color: #FF8A3D; font-weight: 500;">Capital B</span>
-    <span style="font-size: 10px; color: rgba(255,255,255,0.45);">Â· current shares + treasury as of <span id="data-asof">2026-06-17</span> Â· verify on <a href="https://bitcointreasuries.net/" target="_blank" style="color:#FF8A3D;text-decoration:none;">bitcointreasuries.net</a></span>
+    <span style="font-size: 10px; color: rgba(255,255,255,0.45);">· current shares + treasury as of <span id="data-asof">2026-06-17</span> · verify on <a href="https://bitcointreasuries.net/" target="_blank" style="color:#FF8A3D;text-decoration:none;">bitcointreasuries.net</a></span>
     <button onclick="resetToCapitalB()" style="margin-left: auto; background: transparent; border: 0.5px solid rgba(255,92,0,0.4); color: #FF8A3D; font-size: 10px; padding: 4px 10px; border-radius: 5px; cursor: pointer; font-family: inherit;">reset</button>
   </div>
 
@@ -131,7 +131,7 @@ table.cb-table td.split { color: #FF8A3D; }
     </div>
     <div class="cb-input-row">
       <label>Current treasury</label>
-      <div class="row"><input type="number" id="i-btc0" step="1" /><span class="unit">â‚¿</span></div>
+      <div class="row"><input type="number" id="i-btc0" step="1" /><span class="unit">₿</span></div>
       <span class="hint">Current BTC holdings.</span>
     </div>
     <div class="cb-input-row">
@@ -141,17 +141,17 @@ table.cb-table td.split { color: #FF8A3D; }
     </div>
     <div class="cb-input-row">
       <label>End of period BTC stack</label>
-      <div class="row"><input type="number" id="i-btcN" step="100" /><span class="unit">â‚¿</span></div>
+      <div class="row"><input type="number" id="i-btcN" step="100" /><span class="unit">₿</span></div>
       <span class="hint">Your target BTC holdings at the end.</span>
     </div>
     <div class="cb-input-row">
       <label>Average mNAV until end of period</label>
-      <div class="row"><input type="number" id="i-mnav" step="0.1" min="1" /><span class="unit">Ã—</span></div>
+      <div class="row"><input type="number" id="i-mnav" step="0.1" min="1" /><span class="unit">×</span></div>
       <span class="hint">Time-average premium-to-NAV used to value share issuance.</span>
     </div>
     <div class="cb-input-row">
       <label>Future BTC price</label>
-      <div class="row"><span class="unit">â‚¬</span><input type="number" id="i-btcprice" step="1000" /></div>
+      <div class="row"><span class="unit">€</span><input type="number" id="i-btcprice" step="1000" /></div>
       <span class="hint">BTC price at end of period.</span>
     </div>
   </div>
@@ -170,22 +170,22 @@ table.cb-table td.split { color: #FF8A3D; }
 </div>
 
 <div style="background: rgba(255,92,0,0.06); border: 0.5px solid rgba(255,92,0,0.25); border-radius: 12px; padding: 14px 16px; margin: 14px 0; line-height: 1.55;">
-  <div style="font-size: 11px; color: #FF8A3D; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; font-weight: 500;">â†” vs Capital B Projection</div>
+  <div style="font-size: 11px; color: #FF8A3D; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; font-weight: 500;">↔ vs Capital B Projection</div>
   <div style="font-size: 12px; color: rgba(255,255,255,0.78);">
     How this tool differs from the <a href="https://bthemoon2030.github.io/capital-b/" target="_blank" style="color:#FF8A3D;text-decoration:none;">Capital B Projection</a>:
     <ul style="margin: 8px 0 0; padding-left: 18px;">
-      <li><strong style="color:#fff;">mNAV assumption.</strong> This tool uses one <strong>average mNAV</strong> held constant over the entire period. The <a href="https://bthemoon2030.github.io/capital-b/" target="_blank" style="color:#FF8A3D;text-decoration:none;">Capital B Projection</a> ramps mNAV linearly from the <strong>current implied level</strong> up or down to your target â€” whether re-rating happens during the run actually matters there.</li>
-      <li><strong style="color:#fff;">Capital stack.</strong> This tool does <strong>not</strong> model OCAs, warrants, ATM or any specific instruments. It just computes the monthly dilution rate needed to reach Bâ‚™. The <a href="https://bthemoon2030.github.io/capital-b/" target="_blank" style="color:#FF8A3D;text-decoration:none;">Capital B Projection</a> simulates month-by-month which instruments are in-the-money, when they convert or exercise, and fills the cash gap with "future instruments".</li>
-      <li><strong style="color:#fff;">Time horizon.</strong> This tool projects <strong>beyond 31-12-2027</strong> â€” up to 240 months (20 years) â€” so you can model long-dated targets. The <a href="https://bthemoon2030.github.io/capital-b/" target="_blank" style="color:#FF8A3D;text-decoration:none;">Capital B Projection</a> is locked to the FY26-27 horizon (ending 31-12-2027) because that is where the current capital stack is most relevant.</li>
+      <li><strong style="color:#fff;">mNAV assumption.</strong> This tool uses one <strong>average mNAV</strong> held constant over the entire period. The <a href="https://bthemoon2030.github.io/capital-b/" target="_blank" style="color:#FF8A3D;text-decoration:none;">Capital B Projection</a> ramps mNAV linearly from the <strong>current implied level</strong> up or down to your target — whether re-rating happens during the run actually matters there.</li>
+      <li><strong style="color:#fff;">Capital stack.</strong> This tool does <strong>not</strong> model OCAs, warrants, ATM or any specific instruments. It just computes the monthly dilution rate needed to reach Bₙ. The <a href="https://bthemoon2030.github.io/capital-b/" target="_blank" style="color:#FF8A3D;text-decoration:none;">Capital B Projection</a> simulates month-by-month which instruments are in-the-money, when they convert or exercise, and fills the cash gap with "future instruments".</li>
+      <li><strong style="color:#fff;">Time horizon.</strong> This tool projects <strong>beyond 31-12-2027</strong> — up to 240 months (20 years) — so you can model long-dated targets. The <a href="https://bthemoon2030.github.io/capital-b/" target="_blank" style="color:#FF8A3D;text-decoration:none;">Capital B Projection</a> is locked to the FY26-27 horizon (ending 31-12-2027) because that is where the current capital stack is most relevant.</li>
     </ul>
-    <div style="margin-top: 8px; font-size: 11px; color: rgba(255,255,255,0.55);">For scenarios with the actual capital stack â†’ <a href="https://bthemoon2030.github.io/capital-b/" target="_blank" style="color:#FF8A3D;text-decoration:none;">Capital B Projection</a>. For a quick closed-form feasibility check on a BTC target â†’ this tool.</div>
+    <div style="margin-top: 8px; font-size: 11px; color: rgba(255,255,255,0.55);">For scenarios with the actual capital stack → <a href="https://bthemoon2030.github.io/capital-b/" target="_blank" style="color:#FF8A3D;text-decoration:none;">Capital B Projection</a>. For a quick closed-form feasibility check on a BTC target → this tool.</div>
   </div>
 </div>
 
-<div class="cb-nfa">NFA of course, just math â€” <a href="https://twitter.com/Bthemoon2030" target="_blank">@Bthemoon2030</a></div>
+<div class="cb-nfa">NFA of course, just math — <a href="https://twitter.com/Bthemoon2030" target="_blank">@Bthemoon2030</a></div>
 
 <div class="cb-caveat">
-  Model: each month, BTC stack grows linearly from current treasury to end target. Fully diluted sharecount compounds at the monthly dilution rate. NAV<sub>t</sub> = treasury<sub>t</sub> Ã— BTC<sub>price,t</sub>. Share price<sub>t</sub> = (NAV<sub>t</sub> Ã— mNAV) / shares<sub>t</sub>. Sats/share<sub>t</sub> = treasury<sub>t</sub> Ã— 10<sup>8</sup> / shares<sub>t</sub>. The five right-most columns hold the model's BTC price flat at the column header â€” useful for "what if BTC just sits at â‚¬X" scenarios.
+  Model: each month, BTC stack grows linearly from current treasury to end target. Fully diluted sharecount compounds at the monthly dilution rate. NAV<sub>t</sub> = treasury<sub>t</sub> × BTC<sub>price,t</sub>. Share price<sub>t</sub> = (NAV<sub>t</sub> × mNAV) / shares<sub>t</sub>. Sats/share<sub>t</sub> = treasury<sub>t</sub> × 10<sup>8</sup> / shares<sub>t</sub>. The five right-most columns hold the model's BTC price flat at the column header — useful for "what if BTC just sits at €X" scenarios.
 </div>
 
 </div>
@@ -193,10 +193,10 @@ table.cb-table td.split { color: #FF8A3D; }
 
 <script>
 // ---------------------------------------------------------------------------
-// Constants â€” EUR only, Capital B preset
+// Constants — EUR only, Capital B preset
 // ---------------------------------------------------------------------------
 const SAT = 1e8;
-const PRICE_POINTS = [100000, 250000, 500000, 750000, 1000000]; // â‚¬
+const PRICE_POINTS = [100000, 250000, 500000, 750000, 1000000]; // €
 const CAPITAL_B = {
   shares: 427.5e6, btc0: 3139, months: 18, btcN: 11000, mnav: 3, btcprice: 181000,
 };
@@ -221,7 +221,7 @@ function fmtCcy(n, opts) {
   } else {
     s = Math.round(n).toLocaleString('en-US');
   }
-  return 'â‚¬' + s;
+  return '€' + s;
 }
 function fmtPct(x) { return x.toFixed(2) + '%'; }
 function fmtShares(n) {
@@ -230,7 +230,7 @@ function fmtShares(n) {
   if (n >= 1e3) return (n / 1e3).toFixed(0) + 'K';
   return Math.round(n).toLocaleString('en-US');
 }
-function fmtBTC(n) { return Math.round(n).toLocaleString('en-US') + ' â‚¿'; }
+function fmtBTC(n) { return Math.round(n).toLocaleString('en-US') + ' ₿'; }
 function fmtSats(n) { return Math.round(n).toLocaleString('en-US'); }
 function monthDate(t) {
   const d = new Date();
@@ -244,7 +244,7 @@ function monthDate(t) {
 function computeDilution() {
   // From user's formula: d = (r - 1) / M  where r = (BN/B0)^(1/N), M = avg mNAV.
   // Intuition: per 1% BTC growth needed, share dilution scales by 1/M because
-  // each new share is sold at M Ã— NAV â€” fewer shares fund the same buy.
+  // each new share is sold at M × NAV — fewer shares fund the same buy.
   const { btc0, btcN, months, mnav } = STATE;
   if (btc0 <= 0 || months <= 0 || mnav <= 0) return 0;
   const r = Math.pow(btcN / btc0, 1 / months);
@@ -296,25 +296,25 @@ function project() {
 function renderHero(e) {
   document.getElementById('r-price').textContent = fmtCcy(e.projPrice, { share: true });
   document.getElementById('r-price-sub').textContent =
-    'in ' + STATE.months + ' months Â· BTC at ' + fmtCcy(STATE.btcprice, { compact: true }) +
-    ' Â· mNAV ' + STATE.mnav + 'Ã—';
+    'in ' + STATE.months + ' months · BTC at ' + fmtCcy(STATE.btcprice, { compact: true }) +
+    ' · mNAV ' + STATE.mnav + '×';
 }
 
 function renderMetrics(e) {
   document.getElementById('m-nav').textContent = fmtCcy(e.NAV, { compact: true });
   document.getElementById('m-mc').textContent = fmtCcy(e.impliedMC, { compact: true });
   document.getElementById('m-shares').textContent = fmtShares(e.shares);
-  document.getElementById('m-shares-mult').textContent = (e.shares / e.sharesNow).toFixed(2) + 'Ã— vs now (' + fmtShares(e.sharesNow) + ')';
+  document.getElementById('m-shares-mult').textContent = (e.shares / e.sharesNow).toFixed(2) + '× vs now (' + fmtShares(e.sharesNow) + ')';
   document.getElementById('m-sats').textContent = fmtSats(e.sats);
   document.getElementById('m-sats-mult').textContent = 'now ~' + fmtSats(e.satsNow);
   document.getElementById('m-stack').textContent = fmtBTC(e.treas);
-  document.getElementById('m-stack-delta').textContent = '+' + Math.round(e.stackDelta).toLocaleString('en-US') + ' â‚¿ over period';
-  document.getElementById('m-mnav').textContent = STATE.mnav.toFixed(1) + 'Ã—';
+  document.getElementById('m-stack-delta').textContent = '+' + Math.round(e.stackDelta).toLocaleString('en-US') + ' ₿ over period';
+  document.getElementById('m-mnav').textContent = STATE.mnav.toFixed(1) + '×';
   document.getElementById('m-months').textContent = STATE.months;
   document.getElementById('m-months-date').textContent = 'ends ' + monthDate(STATE.months);
   document.getElementById('m-dilution').textContent = STATE.dilution.toFixed(2) + '%/mo';
   const annual = (Math.pow(1 + STATE.dilution / 100, 12) - 1) * 100;
-  document.getElementById('m-dilution-ann').textContent = 'â‰ˆ ' + annual.toFixed(1) + '% / yr';
+  document.getElementById('m-dilution-ann').textContent = '≈ ' + annual.toFixed(1) + '% / yr';
 }
 
 function renderTable(rows) {
@@ -333,8 +333,8 @@ function renderTable(rows) {
       <td>${r.date}</td>
       <td class="muted">${r.t}</td>
       <td>${fmtShares(r.shares)}</td>
-      <td class="muted">${r.added ? '+' + Math.round(r.added).toLocaleString('en-US') : 'â€”'}</td>
-      <td>${Math.round(r.treas).toLocaleString('en-US')} â‚¿</td>
+      <td class="muted">${r.added ? '+' + Math.round(r.added).toLocaleString('en-US') : '—'}</td>
+      <td>${Math.round(r.treas).toLocaleString('en-US')} ₿</td>
       <td>${fmtSats(r.sats)}</td>
       ${r.prices.map(p => `<td class="split">${fmtCcy(p, { share: true })}</td>`).join('')}
     </tr>`;
@@ -390,7 +390,7 @@ syncInputs();
 compute();
 
 // ---------------------------------------------------------------------------
-// Live BTC/EUR (CoinGecko) â€” shown as reference, not auto-applied to inputs
+// Live BTC/EUR (CoinGecko) — shown as reference, not auto-applied to inputs
 // ---------------------------------------------------------------------------
 async function fetchLiveBTC() {
   try {
@@ -400,7 +400,7 @@ async function fetchLiveBTC() {
     if (!j.bitcoin || !j.bitcoin.eur) return;
     const note = document.createElement('div');
     note.className = 'cb-live';
-    note.textContent = 'â— live BTC: â‚¬' + Math.round(j.bitcoin.eur).toLocaleString('en-US');
+    note.textContent = '● live BTC: €' + Math.round(j.bitcoin.eur).toLocaleString('en-US');
     note.style.color = '#5DCAA5';
     document.querySelector('.cb-hero').appendChild(note);
   } catch (e) { /* silent */ }
