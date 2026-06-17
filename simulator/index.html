@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BTCTC Simulator â€” Bitcoin Treasury Company projection</title>
+<meta name="description" content="Project any Bitcoin Treasury Company forward in time. Inputs â†’ NAV, mNAV, share price, sats per share, and a month-by-month projection table.">
+<meta property="og:title" content="BTCTC Simulator">
+<meta property="og:description" content="Bitcoin Treasury Company projection model. Inputs â†’ outputs in one screen.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@Bthemoon2030">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='25,5 75,5 100,50 75,95 25,95 0,50' fill='%23FF5C00'/><text x='50' y='65' font-family='sans-serif' font-size='50' font-weight='500' text-anchor='middle' fill='%230a0a0a'>B</text></svg>">
+
+<style>
+body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+.cb-wrap { max-width: 960px; margin: 0 auto; }
+.cb-canvas { background: #0a0a0a; border-radius: 16px; padding: 20px 16px; color: #fff; margin-bottom: 1rem; }
+@media (min-width: 600px) { .cb-canvas { padding: 28px 24px; } }
+.cb-hex { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background: #FF5C00; clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%); color: #0a0a0a; font-weight: 500; font-size: 13px; margin-right: 6px; }
+.cb-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.cb-credit { text-align: right; line-height: 1.3; flex-shrink: 0; }
+.cb-credit .by { font-size: 13px; color: #fff; display: block; line-height: 1.4; }
+.cb-credit .by a { color: #fff; text-decoration: none; font-weight: 500; }
+.cb-step { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+@media (min-width: 600px) { .cb-step { padding: 18px; margin-bottom: 14px; } }
+.cb-step-num { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background: #FF5C00; color: #0a0a0a; border-radius: 50%; font-weight: 500; font-size: 12px; margin-right: 8px; }
+.cb-step-title { font-size: 14px; font-weight: 500; color: #fff; }
+.cb-step-hint { font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 4px; margin-left: 30px; }
+.cb-btn { background: transparent; border: 0.5px solid rgba(255,255,255,0.18); color: rgba(255,255,255,0.85); padding: 9px 10px; border-radius: 8px; font-size: 12px; font-family: inherit; cursor: pointer; text-align: center; line-height: 1.3; min-height: 40px; }
+.cb-btn.active { background: #FF5C00; border-color: #FF5C00; color: #0a0a0a; font-weight: 500; }
+.cb-band-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.cb-band-row .cb-btn { flex: 1; min-width: 70px; padding: 7px 12px; min-height: 34px; }
+.cb-input-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 12px; }
+@media (min-width: 600px) { .cb-input-grid { grid-template-columns: 1fr 1fr; gap: 12px; } }
+.cb-input-row { background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 10px 12px; }
+.cb-input-row label { display: block; font-size: 11px; color: rgba(255,255,255,0.6); margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
+.cb-input-row .hint { display: block; font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 4px; line-height: 1.4; }
+.cb-input-row .row { display: flex; align-items: center; gap: 8px; }
+.cb-input-row input[type="number"] { flex: 1; background: rgba(0,0,0,0.3); border: 0.5px solid rgba(255,255,255,0.12); color: #fff; font-size: 15px; font-weight: 500; padding: 7px 10px; border-radius: 6px; font-family: inherit; font-variant-numeric: tabular-nums; min-width: 0; }
+.cb-input-row input[type="number"]:focus { outline: none; border-color: #FF5C00; }
+.cb-input-row .unit { font-size: 11px; color: rgba(255,255,255,0.5); white-space: nowrap; }
+.cb-divider { height: 0.5px; background: rgba(255,255,255,0.08); margin: 14px 0; }
+.cb-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+@media (min-width: 600px) { .cb-stat-grid { grid-template-columns: repeat(4, 1fr); } }
+.cb-card { background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px; text-align: center; }
+.cb-card .v { font-size: 18px; font-weight: 500; color: #FF5C00; line-height: 1.1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.cb-card .l { font-size: 10px; color: rgba(255,255,255,0.55); margin-top: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
+.cb-card .s { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 3px; }
+.cb-hero { background: linear-gradient(180deg, rgba(255,92,0,0.18) 0%, rgba(255,92,0,0.04) 100%); border-radius: 12px; padding: 18px; margin-bottom: 14px; text-align: center; border: 0.5px solid rgba(255,92,0,0.25); }
+.cb-hero-num { font-size: 42px; font-weight: 500; color: #FF5C00; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+@media (min-width: 600px) { .cb-hero-num { font-size: 56px; } .cb-hero { padding: 24px; margin-bottom: 18px; } }
+.cb-hero-label { font-size: 11px; color: rgba(255,255,255,0.65); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+.cb-hero-sub { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 8px; }
+.cb-table-wrap { overflow-x: auto; max-height: 480px; overflow-y: auto; border-radius: 8px; border: 0.5px solid rgba(255,255,255,0.08); margin-top: 10px; }
+table.cb-table { width: 100%; border-collapse: collapse; font-size: 11px; font-variant-numeric: tabular-nums; }
+table.cb-table th { position: sticky; top: 0; background: #181818; color: rgba(255,255,255,0.7); font-weight: 500; padding: 8px 10px; text-align: right; border-bottom: 0.5px solid rgba(255,255,255,0.12); white-space: nowrap; font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
+table.cb-table th:first-child, table.cb-table td:first-child { text-align: left; }
+table.cb-table th.split { background: rgba(255,92,0,0.12); color: #FF8A3D; }
+table.cb-table td { padding: 7px 10px; text-align: right; border-bottom: 0.5px solid rgba(255,255,255,0.04); color: rgba(255,255,255,0.85); white-space: nowrap; }
+table.cb-table tr:hover td { background: rgba(255,92,0,0.04); }
+table.cb-table td.muted { color: rgba(255,255,255,0.5); }
+table.cb-table td.split { color: #FF8A3D; }
+.cb-presets { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.cb-preset-btn { background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); font-size: 11px; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: inherit; }
+.cb-preset-btn:hover { background: rgba(255,92,0,0.1); border-color: rgba(255,92,0,0.3); color: #FF8A3D; }
+.cb-live { font-size: 10px; color: rgba(255,255,255,0.45); margin-top: 6px; text-align: center; }
+.cb-nfa { font-size: 13px; color: #FF5C00; font-weight: 500; text-align: center; padding: 14px 0 6px; }
+.cb-nfa a { color: #FF5C00; text-decoration: none; }
+.cb-caveat { font-size: 10px; color: rgba(255,255,255,0.4); line-height: 1.6; padding: 12px 0 0; border-top: 0.5px solid rgba(255,255,255,0.08); margin-top: 14px; }
+.cb-caveat a { color: #FF8A3D; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="cb-wrap">
+<div class="cb-canvas">
+
+<div class="cb-header">
+  <div>
+    <div style="display: flex; align-items: center; margin-bottom: 4px;">
+      <span class="cb-hex">B</span>
+      <span style="font-size: 13px; letter-spacing: 0.12em; color: rgba(255,255,255,0.85);">CAPITAL B</span>
+    </div>
+    <div style="font-size: 19px; font-weight: 500; line-height: 1.25; color: #fff;">Projected share price end of period</div>
+  </div>
+  <div class="cb-credit">
+    <span class="by">Model and formula by<br><a href="https://twitter.com/Bthemoon2030" target="_blank">@Bthemoon2030</a></span>
+  </div>
+</div>
+
+<!-- HERO: projected share price -->
+<div class="cb-hero">
+  <div class="cb-hero-label">Projected share price at end of period</div>
+  <div class="cb-hero-num" id="r-price">â€”</div>
+  <div class="cb-hero-sub" id="r-price-sub">â€”</div>
+</div>
+
+<!-- KEY METRICS -->
+<div class="cb-step">
+  <div><span class="cb-step-num">1</span><span class="cb-step-title">Key metrics at end of period</span></div>
+  <div class="cb-stat-grid">
+    <div class="cb-card"><div class="v" id="m-nav">â€”</div><div class="l">NAV</div><div class="s">treasury Ã— BTC price</div></div>
+    <div class="cb-card"><div class="v" id="m-mc">â€”</div><div class="l">Implied market cap</div><div class="s">NAV Ã— mNAV</div></div>
+    <div class="cb-card"><div class="v" id="m-shares">â€”</div><div class="l">Fully diluted shares</div><div class="s" id="m-shares-mult">â€”</div></div>
+    <div class="cb-card"><div class="v" id="m-sats">â€”</div><div class="l">Sats / share</div><div class="s" id="m-sats-mult">â€”</div></div>
+    <div class="cb-card"><div class="v" id="m-stack">â€”</div><div class="l">BTC stack</div><div class="s" id="m-stack-delta">â€”</div></div>
+    <div class="cb-card"><div class="v" id="m-mnav">â€”</div><div class="l">mNAV future</div><div class="s">your input</div></div>
+    <div class="cb-card"><div class="v" id="m-months">â€”</div><div class="l">Months ahead</div><div class="s" id="m-months-date">â€”</div></div>
+    <div class="cb-card" style="border-color: rgba(255,92,0,0.35); background: rgba(255,92,0,0.06);"><div class="v" id="m-dilution">â€”</div><div class="l">Needed monthly dilution</div><div class="s" id="m-dilution-ann">â€”</div></div>
+  </div>
+</div>
+
+<!-- INPUTS -->
+<div class="cb-step">
+  <div><span class="cb-step-num">2</span><span class="cb-step-title">Inputs</span></div>
+  <div class="cb-step-hint">Defaults auto-loaded for Capital B (ALCPB). Override any field freely.</div>
+
+  <div style="display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 10px 12px; background: rgba(255,92,0,0.06); border: 0.5px solid rgba(255,92,0,0.2); border-radius: 8px;">
+    <span style="font-size: 11px; color: #FF8A3D; font-weight: 500;">Capital B</span>
+    <span style="font-size: 10px; color: rgba(255,255,255,0.45);">Â· current shares + treasury as of <span id="data-asof">2026-06-17</span> Â· verify on <a href="https://bitcointreasuries.net/" target="_blank" style="color:#FF8A3D;text-decoration:none;">bitcointreasuries.net</a></span>
+    <button onclick="resetToCapitalB()" style="margin-left: auto; background: transparent; border: 0.5px solid rgba(255,92,0,0.4); color: #FF8A3D; font-size: 10px; padding: 4px 10px; border-radius: 5px; cursor: pointer; font-family: inherit;">reset</button>
+  </div>
+
+  <div class="cb-divider"></div>
+
+  <div class="cb-input-grid">
+    <div class="cb-input-row">
+      <label>Current fully diluted sharecount</label>
+      <div class="row"><input type="number" id="i-shares" step="100000" /><span class="unit">shares</span></div>
+      <span class="hint">All shares including warrants, OCAs, convertibles.</span>
+    </div>
+    <div class="cb-input-row">
+      <label>Current treasury</label>
+      <div class="row"><input type="number" id="i-btc0" step="1" /><span class="unit">â‚¿</span></div>
+      <span class="hint">Current BTC holdings.</span>
+    </div>
+    <div class="cb-input-row">
+      <label>Months ahead</label>
+      <div class="row"><input type="number" id="i-months" min="1" max="240" step="1" /><span class="unit">months</span></div>
+      <span class="hint">Projection horizon (max 240 = 20 years).</span>
+    </div>
+    <div class="cb-input-row">
+      <label>End of period BTC stack</label>
+      <div class="row"><input type="number" id="i-btcN" step="100" /><span class="unit">â‚¿</span></div>
+      <span class="hint">Your target BTC holdings at the end.</span>
+    </div>
+    <div class="cb-input-row">
+      <label>Average mNAV until end of period</label>
+      <div class="row"><input type="number" id="i-mnav" step="0.1" min="1" /><span class="unit">Ã—</span></div>
+      <span class="hint">Time-average premium-to-NAV used to value share issuance.</span>
+    </div>
+    <div class="cb-input-row">
+      <label>Future BTC price</label>
+      <div class="row"><span class="unit">â‚¬</span><input type="number" id="i-btcprice" step="1000" /></div>
+      <span class="hint">BTC price at end of period.</span>
+    </div>
+  </div>
+</div>
+
+<!-- MONTHLY TABLE -->
+<div class="cb-step">
+  <div><span class="cb-step-num">3</span><span class="cb-step-title">Monthly projection</span></div>
+  <div class="cb-step-hint">Right-side columns: share price at each BTC-price scenario, holding mNAV constant.</div>
+  <div class="cb-table-wrap">
+    <table class="cb-table" id="proj-table">
+      <thead><tr id="proj-head"></tr></thead>
+      <tbody id="proj-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<div style="background: rgba(255,92,0,0.06); border: 0.5px solid rgba(255,92,0,0.25); border-radius: 12px; padding: 14px 16px; margin: 14px 0; line-height: 1.55;">
+  <div style="font-size: 11px; color: #FF8A3D; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; font-weight: 500;">â†” vs Capital B Projection</div>
+  <div style="font-size: 12px; color: rgba(255,255,255,0.78);">
+    How this tool differs from the <a href="https://bthemoon2030.github.io/capital-b/" target="_blank" style="color:#FF8A3D;text-decoration:none;">Capital B Projection</a>:
+    <ul style="margin: 8px 0 0; padding-left: 18px;">
+      <li><strong style="color:#fff;">mNAV assumption.</strong> This tool uses one <strong>average mNAV</strong> held constant over the entire period. The <a href="https://bthemoon2030.github.io/capital-b/" target="_blank" style="color:#FF8A3D;text-decoration:none;">Capital B Projection</a> ramps mNAV linearly from the <strong>current implied level</strong> up or down to your target â€” whether re-rating happens during the run actually matters there.</li>
+      <li><strong style="color:#fff;">Capital stack.</strong> This tool does <strong>not</strong> model OCAs, warrants, ATM or any specific instruments. It just computes the monthly dilution rate needed to reach Bâ‚™. The <a href="https://bthemoon2030.github.io/capital-b/" target="_blank" style="color:#FF8A3D;text-decoration:none;">Capital B Projection</a> simulates month-by-month which instruments are in-the-money, when they convert or exercise, and fills the cash gap with "future instruments".</li>
+      <li><strong style="color:#fff;">Time horizon.</strong> This tool projects <strong>beyond 31-12-2027</strong> â€” up to 240 months (20 years) â€” so you can model long-dated targets. The <a href="https://bthemoon2030.github.io/capital-b/" target="_blank" style="color:#FF8A3D;text-decoration:none;">Capital B Projection</a> is locked to the FY26-27 horizon (ending 31-12-2027) because that is where the current capital stack is most relevant.</li>
+    </ul>
+    <div style="margin-top: 8px; font-size: 11px; color: rgba(255,255,255,0.55);">For scenarios with the actual capital stack â†’ <a href="https://bthemoon2030.github.io/capital-b/" target="_blank" style="color:#FF8A3D;text-decoration:none;">Capital B Projection</a>. For a quick closed-form feasibility check on a BTC target â†’ this tool.</div>
+  </div>
+</div>
+
+<div class="cb-nfa">NFA of course, just math â€” <a href="https://twitter.com/Bthemoon2030" target="_blank">@Bthemoon2030</a></div>
+
+<div class="cb-caveat">
+  Model: each month, BTC stack grows linearly from current treasury to end target. Fully diluted sharecount compounds at the monthly dilution rate. NAV<sub>t</sub> = treasury<sub>t</sub> Ã— BTC<sub>price,t</sub>. Share price<sub>t</sub> = (NAV<sub>t</sub> Ã— mNAV) / shares<sub>t</sub>. Sats/share<sub>t</sub> = treasury<sub>t</sub> Ã— 10<sup>8</sup> / shares<sub>t</sub>. The five right-most columns hold the model's BTC price flat at the column header â€” useful for "what if BTC just sits at â‚¬X" scenarios.
+</div>
+
+</div>
+</div>
+
+<script>
+// ---------------------------------------------------------------------------
+// Constants â€” EUR only, Capital B preset
+// ---------------------------------------------------------------------------
+const SAT = 1e8;
+const PRICE_POINTS = [100000, 250000, 500000, 750000, 1000000]; // â‚¬
+const CAPITAL_B = {
+  shares: 427.5e6, btc0: 3139, months: 18, btcN: 11000, mnav: 3, btcprice: 181000,
+};
+const STATE = Object.assign({}, CAPITAL_B);
+
+// ---------------------------------------------------------------------------
+// Formatting
+// ---------------------------------------------------------------------------
+function fmtCcy(n, opts) {
+  opts = opts || {};
+  const abs = Math.abs(n);
+  let s;
+  if (opts.compact) {
+    if (abs >= 1e9) s = (n / 1e9).toFixed(2) + 'B';
+    else if (abs >= 1e6) s = (n / 1e6).toFixed(2) + 'M';
+    else if (abs >= 1e3) s = (n / 1e3).toFixed(1) + 'K';
+    else s = n.toFixed(0);
+  } else if (opts.share) {
+    if (abs >= 1000) s = Math.round(n).toLocaleString('en-US');
+    else if (abs >= 10) s = n.toFixed(1);
+    else s = n.toFixed(2);
+  } else {
+    s = Math.round(n).toLocaleString('en-US');
+  }
+  return 'â‚¬' + s;
+}
+function fmtPct(x) { return x.toFixed(2) + '%'; }
+function fmtShares(n) {
+  if (n >= 1e9) return (n / 1e9).toFixed(2) + 'B';
+  if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return (n / 1e3).toFixed(0) + 'K';
+  return Math.round(n).toLocaleString('en-US');
+}
+function fmtBTC(n) { return Math.round(n).toLocaleString('en-US') + ' â‚¿'; }
+function fmtSats(n) { return Math.round(n).toLocaleString('en-US'); }
+function monthDate(t) {
+  const d = new Date();
+  d.setMonth(d.getMonth() + t);
+  return String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear();
+}
+
+// ---------------------------------------------------------------------------
+// Core model
+// ---------------------------------------------------------------------------
+function computeDilution() {
+  // From user's formula: d = (r - 1) / M  where r = (BN/B0)^(1/N), M = avg mNAV.
+  // Intuition: per 1% BTC growth needed, share dilution scales by 1/M because
+  // each new share is sold at M Ã— NAV â€” fewer shares fund the same buy.
+  const { btc0, btcN, months, mnav } = STATE;
+  if (btc0 <= 0 || months <= 0 || mnav <= 0) return 0;
+  const r = Math.pow(btcN / btc0, 1 / months);
+  return ((r - 1) / mnav) * 100; // as % per month
+}
+
+function project() {
+  const { shares, btc0, months, btcN, mnav, btcprice } = STATE;
+  if (months <= 0 || shares <= 0 || btc0 <= 0) return null;
+
+  // BTC stack grows geometrically (matches the closed-form dilution formula).
+  const r = Math.pow(btcN / btc0, 1 / months);
+  const dRate = STATE.dilution / 100;
+
+  const rows = [];
+  let prevTreas = btc0;
+  for (let t = 0; t <= months; t++) {
+    const sh_t = shares * Math.pow(1 + dRate, t);
+    const treas_t = btc0 * Math.pow(r, t);
+    const added_t = t === 0 ? 0 : treas_t - prevTreas;
+    prevTreas = treas_t;
+    const sats_t = (treas_t * SAT) / sh_t;
+    const prices = PRICE_POINTS.map(p => (treas_t * p * mnav) / sh_t);
+    rows.push({ t, date: monthDate(t), shares: sh_t, added: added_t, treas: treas_t, sats: sats_t, prices });
+  }
+
+  const endRow = rows[rows.length - 1];
+  const NAV = endRow.treas * btcprice;
+  const impliedMC = NAV * mnav;
+  const projPrice = impliedMC / endRow.shares;
+
+  return {
+    rows,
+    end: {
+      shares: endRow.shares,
+      treas: endRow.treas,
+      NAV, impliedMC, projPrice,
+      sats: endRow.sats,
+      stackDelta: endRow.treas - btc0,
+      satsNow: (btc0 * SAT) / shares,
+      sharesNow: shares,
+    }
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Renderers
+// ---------------------------------------------------------------------------
+function renderHero(e) {
+  document.getElementById('r-price').textContent = fmtCcy(e.projPrice, { share: true });
+  document.getElementById('r-price-sub').textContent =
+    'in ' + STATE.months + ' months Â· BTC at ' + fmtCcy(STATE.btcprice, { compact: true }) +
+    ' Â· mNAV ' + STATE.mnav + 'Ã—';
+}
+
+function renderMetrics(e) {
+  document.getElementById('m-nav').textContent = fmtCcy(e.NAV, { compact: true });
+  document.getElementById('m-mc').textContent = fmtCcy(e.impliedMC, { compact: true });
+  document.getElementById('m-shares').textContent = fmtShares(e.shares);
+  document.getElementById('m-shares-mult').textContent = (e.shares / e.sharesNow).toFixed(2) + 'Ã— vs now (' + fmtShares(e.sharesNow) + ')';
+  document.getElementById('m-sats').textContent = fmtSats(e.sats);
+  document.getElementById('m-sats-mult').textContent = 'now ~' + fmtSats(e.satsNow);
+  document.getElementById('m-stack').textContent = fmtBTC(e.treas);
+  document.getElementById('m-stack-delta').textContent = '+' + Math.round(e.stackDelta).toLocaleString('en-US') + ' â‚¿ over period';
+  document.getElementById('m-mnav').textContent = STATE.mnav.toFixed(1) + 'Ã—';
+  document.getElementById('m-months').textContent = STATE.months;
+  document.getElementById('m-months-date').textContent = 'ends ' + monthDate(STATE.months);
+  document.getElementById('m-dilution').textContent = STATE.dilution.toFixed(2) + '%/mo';
+  const annual = (Math.pow(1 + STATE.dilution / 100, 12) - 1) * 100;
+  document.getElementById('m-dilution-ann').textContent = 'â‰ˆ ' + annual.toFixed(1) + '% / yr';
+}
+
+function renderTable(rows) {
+  const head = document.getElementById('proj-head');
+  const body = document.getElementById('proj-body');
+
+  const headHTML = ['Date','Mo','FD Shares','BTC added','Treasury','Sats / share']
+    .map(h => `<th>${h}</th>`).join('') +
+    PRICE_POINTS.map(p => `<th class="split">${fmtCcy(p, { compact: true })}</th>`).join('');
+  head.innerHTML = headHTML;
+
+  body.innerHTML = rows.map((r, idx) => {
+    const isLast = idx === rows.length - 1;
+    const rowStyle = isLast ? ' style="background:rgba(255,92,0,0.06);font-weight:500;"' : '';
+    return `<tr${rowStyle}>
+      <td>${r.date}</td>
+      <td class="muted">${r.t}</td>
+      <td>${fmtShares(r.shares)}</td>
+      <td class="muted">${r.added ? '+' + Math.round(r.added).toLocaleString('en-US') : 'â€”'}</td>
+      <td>${Math.round(r.treas).toLocaleString('en-US')} â‚¿</td>
+      <td>${fmtSats(r.sats)}</td>
+      ${r.prices.map(p => `<td class="split">${fmtCcy(p, { share: true })}</td>`).join('')}
+    </tr>`;
+  }).join('');
+}
+
+function syncInputs() {
+  document.getElementById('i-shares').value = STATE.shares;
+  document.getElementById('i-btc0').value = STATE.btc0;
+  document.getElementById('i-months').value = STATE.months;
+  document.getElementById('i-btcN').value = STATE.btcN;
+  document.getElementById('i-mnav').value = STATE.mnav;
+  document.getElementById('i-btcprice').value = STATE.btcprice;
+}
+
+// ---------------------------------------------------------------------------
+// Actions
+// ---------------------------------------------------------------------------
+function resetToCapitalB() {
+  Object.assign(STATE, CAPITAL_B);
+  syncInputs();
+  compute();
+}
+
+function compute() {
+  STATE.dilution = computeDilution();
+  const proj = project();
+  if (!proj) return;
+  renderHero(proj.end);
+  renderMetrics(proj.end);
+  renderTable(proj.rows);
+}
+
+// ---------------------------------------------------------------------------
+// Wire up
+// ---------------------------------------------------------------------------
+function wire(id, key, transform) {
+  document.getElementById(id).addEventListener('input', e => {
+    const v = +e.target.value;
+    if (isNaN(v)) return;
+    STATE[key] = transform ? transform(v) : v;
+    compute();
+  });
+}
+wire('i-shares', 'shares');
+wire('i-btc0', 'btc0');
+wire('i-months', 'months', v => Math.min(240, Math.max(1, Math.round(v))));
+wire('i-btcN', 'btcN');
+wire('i-mnav', 'mnav');
+wire('i-btcprice', 'btcprice');
+
+syncInputs();
+compute();
+
+// ---------------------------------------------------------------------------
+// Live BTC/EUR (CoinGecko) â€” shown as reference, not auto-applied to inputs
+// ---------------------------------------------------------------------------
+async function fetchLiveBTC() {
+  try {
+    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=eur');
+    if (!r.ok) return;
+    const j = await r.json();
+    if (!j.bitcoin || !j.bitcoin.eur) return;
+    const note = document.createElement('div');
+    note.className = 'cb-live';
+    note.textContent = 'â— live BTC: â‚¬' + Math.round(j.bitcoin.eur).toLocaleString('en-US');
+    note.style.color = '#5DCAA5';
+    document.querySelector('.cb-hero').appendChild(note);
+  } catch (e) { /* silent */ }
+}
+fetchLiveBTC();
+</script>
+
+</body>
+</html>
