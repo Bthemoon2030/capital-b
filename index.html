@@ -150,12 +150,12 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-sats">0</div>
     <div class="cb-stat-label">Sats / share</div>
-    <div class="cb-stat-sub" id="r-sats-now">today ~734</div>
+    <div class="cb-stat-sub" id="r-sats-now">today ~736</div>
   </div>
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-shares">0M</div>
     <div class="cb-stat-label">Final shares</div>
-    <div class="cb-stat-sub" id="r-share-mult">— vs 301M</div>
+    <div class="cb-stat-sub" id="r-share-mult">— vs 330M</div>
   </div>
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-drag">0%</div>
@@ -248,7 +248,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
   <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 10px; margin-top: 12px;" id="ocas-detail"></div>
   <div class="cb-warning-box" id="btc-warn"></div>
   <div style="font-size: 10px; color: rgba(255,255,255,0.45); margin-top: 8px; line-height: 1.5;">
-    Total BTC claim: <strong style="color:#ff8888;">1,060 ₿</strong>. Tranches with multiple holders shown as "Multi".
+    Total BTC claim: <strong style="color:#ff8888;">821 ₿</strong>. Tranches with multiple holders shown as "Multi".
   </div>
 </div>
 
@@ -288,8 +288,8 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
     </div>
     <div class="cb-drag-bar"><div class="cb-drag-fill" id="drag-fill" style="width:36%;"></div></div>
     <div class="cb-drag-row">
-      <span id="drag-claim">1,060 ₿ claimed</span>
-      <span id="drag-free">of 3,139 ₿ total</span>
+      <span id="drag-claim">821 ₿ claimed</span>
+      <span id="drag-free">of 3,140 ₿ total</span>
     </div>
     <div class="cb-drag-source">
       The "drag" concept and BTC claim staircase framework comes from <a href="https://cebetracker.io/insights/capitalb-finish-the-math/" target="_blank">CEBE Tracker — Finish the Math: Capital B</a> by Bobby Tierney. Highly recommended reading.
@@ -325,10 +325,10 @@ let CURRENT_BTC_PRICE = 67500;  // live-overridden by fetchLivePrices() (CoinGec
 const USD_EUR = 1.08;
 const GENESIS = new Date('2009-01-03').getTime();
 const NOW_DATE = new Date('2026-05-13').getTime();
-let BASIC_SHARES = 300.7e6;          // live-overridable
-let FULLY_DILUTED_SHARES = 427.5e6;  // live-overridable
+let BASIC_SHARES = 329.7e6;          // live-overridable; per 03-08-2026 (300,972,268 pre-conversion + 28,687,362 B-01 shares at adjusted conv price €0.495)
+let FULLY_DILUTED_SHARES = 426.4e6;  // live-overridable; per 03-08-2026 KPI (426,427,311) — unchanged by B-01 conversion (already in FD)
 const FORCED_MULT = 1.30;
-let TODAY_BTC = 3139;                // live-overridable
+let TODAY_BTC = 3140;                // live-overridable; +1 BTC on 03-08-2026 from €52.9K ATM raise
 
 // BTC end-of-period 31-12-2027 prices in EUR (power-law projections by @Giovann35084111)
 // Power law formula: P_USD = 10^(-17.3) * days^5.82, converted to EUR /1.08, rounded to nearest 1K.
@@ -343,22 +343,26 @@ const WARRANTS = [
   { id: '2026-05', count: 23.0e6, strike: 1.46 },
 ];
 
+// Outstanding OCA state per CB press release 03-08-2026: 821 BTC total claim
 const OCAS = [
-  { id: 'B-01', holder: 'Multi', btcClaim: 200, convPrice: 0.544, issuedMo: -13, gatesRemoved: true },
-  { id: 'B-02-2', holder: 'Blockstream', btcClaim: 605, convPrice: 0.7072, issuedMo: -11, gatesRemoved: true },
-  { id: 'A-03', holder: 'TOBAM', btcClaim: 60, convPrice: 3.12, issuedMo: -11, gatesRemoved: true },
-  { id: 'B-03', holder: 'Moonlight', btcClaim: 60, convPrice: 3.809, issuedMo: -11, gatesRemoved: false },
-  { id: 'A-04', holder: 'Multi', btcClaim: 100, convPrice: 2.59, issuedMo: -10, gatesRemoved: true },
-  { id: 'A-05', holder: 'TOBAM', btcClaim: 35, convPrice: 1.83, issuedMo: -9, gatesRemoved: true },
+  // B-01 fully converted on 03-08-2026: 14,195,352 OCA B-01 → 28,687,362 shares at adjusted conv price €0.495. Now part of BASIC_SHARES.
+  { id: 'B-02', holder: 'Blockstream', btcClaim: 544, convPrice: 0.7072, issuedMo: -11, gatesRemoved: true },
+  { id: 'A-03', holder: 'TOBAM', btcClaim: 62, convPrice: 3.12, issuedMo: -11, gatesRemoved: true },
+  { id: 'B-03', holder: 'Moonlight', btcClaim: 48, convPrice: 3.809, issuedMo: -11, gatesRemoved: false },
+  { id: 'A-04', holder: 'Multi', btcClaim: 52, convPrice: 2.59, issuedMo: -10, gatesRemoved: true },
+  { id: 'B-04', holder: 'Multi', btcClaim: 53, convPrice: 2.59, issuedMo: -10, gatesRemoved: true },
+  { id: 'A-05', holder: 'TOBAM', btcClaim: 62, convPrice: 1.83, issuedMo: -9, gatesRemoved: true },
 ];
 
+// Shares issued on full conversion, scaled proportionally from prior model values by new btcClaim.
 const OCA_SHARES = {
-  'B-01': 28117565,
-  'B-02-2': 78167171,
-  'A-03': 1923077,
-  'B-03': 1210332,
-  'A-04': 3878773,
-  'A-05': 3551913,
+  // 'B-01': 28687362, — converted 03-08-2026, now in BASIC_SHARES
+  'B-02': 70285000,   // scaled: 78,167,171 × 544/605
+  'A-03': 1987179,    // scaled: 1,923,077 × 62/60
+  'B-03': 968266,     // scaled: 1,210,332 × 48/60
+  'A-04': 2016962,    // scaled: 3,878,773 × 52/100
+  'B-04': 2055750,    // new tranche, same €2.59 conv as A-04, same shares/BTC ratio: 3,878,773/100 × 53
+  'A-05': 6292957,    // scaled: 3,551,913 × 62/35
 };
 
 const targets = [
