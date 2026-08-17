@@ -289,7 +289,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
     <div class="cb-drag-bar"><div class="cb-drag-fill" id="drag-fill" style="width:36%;"></div></div>
     <div class="cb-drag-row">
       <span id="drag-claim">821 ₿ claimed</span>
-      <span id="drag-free">of 3,140 ₿ total</span>
+      <span id="drag-free">of 3,145 ₿ total</span>
     </div>
     <div class="cb-drag-source">
       The "drag" concept and BTC claim staircase framework comes from <a href="https://cebetracker.io/insights/capitalb-finish-the-math/" target="_blank">CEBE Tracker — Finish the Math: Capital B</a> by Bobby Tierney. Highly recommended reading.
@@ -325,10 +325,10 @@ let CURRENT_BTC_PRICE = 67500;  // live-overridden by fetchLivePrices() (CoinGec
 const USD_EUR = 1.08;
 const GENESIS = new Date('2009-01-03').getTime();
 const NOW_DATE = new Date('2026-05-13').getTime();
-let BASIC_SHARES = 329.7e6;          // live-overridable; per 03-08-2026 (300,972,268 pre-conversion + 28,687,362 B-01 shares at adjusted conv price €0.495)
-let FULLY_DILUTED_SHARES = 426.4e6;  // live-overridable; per 03-08-2026 KPI (426,427,311) — unchanged by B-01 conversion (already in FD)
+let BASIC_SHARES = 330.3e6;          // live-overridable; per 17-08-2026 KPI (330,306,740) — B-01 conversion completed + 647K ATM shares
+let FULLY_DILUTED_SHARES = 427.1e6;  // live-overridable; per 17-08-2026 KPI (427,074,421)
 const FORCED_MULT = 1.30;
-let TODAY_BTC = 3140;                // live-overridable; +1 BTC on 03-08-2026 from €52.9K ATM raise
+let TODAY_BTC = 3145;                // live-overridable; +5 BTC on 17-08-2026 from €301K ATM raise
 
 // BTC end-of-period 31-12-2027 prices in EUR (power-law projections by @Giovann35084111)
 // Power law formula: P_USD = 10^(-17.3) * days^5.82, converted to EUR /1.08, rounded to nearest 1K.
