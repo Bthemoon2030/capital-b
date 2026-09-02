@@ -155,7 +155,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-shares">0M</div>
     <div class="cb-stat-label">Final shares</div>
-    <div class="cb-stat-sub" id="r-share-mult">— vs 367M</div>
+    <div class="cb-stat-sub" id="r-share-mult">— vs 380M</div>
   </div>
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-drag">0%</div>
@@ -289,7 +289,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
     <div class="cb-drag-bar"><div class="cb-drag-fill" id="drag-fill" style="width:36%;"></div></div>
     <div class="cb-drag-row">
       <span id="drag-claim">821 ₿ claimed</span>
-      <span id="drag-free">of 3,415 ₿ total</span>
+      <span id="drag-free">of 3,521 ₿ total</span>
     </div>
     <div class="cb-drag-source">
       The "drag" concept and BTC claim staircase framework comes from <a href="https://cebetracker.io/insights/capitalb-finish-the-math/" target="_blank">CEBE Tracker — Finish the Math: Capital B</a> by Bobby Tierney. Highly recommended reading.
@@ -325,28 +325,29 @@ let CURRENT_BTC_PRICE = 67500;  // live-overridden by fetchLivePrices() (CoinGec
 const USD_EUR = 1.08;
 const GENESIS = new Date('2009-01-03').getTime();
 const NOW_DATE = new Date('2026-05-13').getTime();
-let BASIC_SHARES = 366.5e6;          // live-overridable; per 28-08-2026 post-ABSA closing (330,306,740 + 36,219,070 ABSA shares = 366,525,810). ⚠ Reverse stock split 10:1 on 08-09-2026 will divide by 10.
-let FULLY_DILUTED_SHARES = 457.1e6;  // live-overridable; per 28-08-2026 post-ABSA (457,096,891). FD excludes warrant potential per CB's diluted-basis definition.
+let BASIC_SHARES = 379.7e6;          // live-overridable; per 02-09-2026 post-Adam-Back ABSA (366,525,810 + 13,181,030 = 379,706,840). ⚠ Reverse stock split 10:1 on 08-09-2026 will divide by 10.
+let FULLY_DILUTED_SHARES = 470.3e6;  // live-overridable; per 02-09-2026 (470,277,921 = 379.7M basic + 88.7M OCAs + 1.8M free shares). FD excludes warrant potential per CB's diluted-basis definition.
 const FORCED_MULT = 1.30;
-let TODAY_BTC = 3415;                // live-overridable; per 28-08-2026 post-ABSA (3,145 + 270 BTC funded by ABSA proceeds). Paired with BASIC_SHARES update to keep sats/share KPI consistent with CB's operational reality.
+let TODAY_BTC = 3521;                // live-overridable; per 02-09-2026 post-ABSA (3,145 confirmed + 376 BTC pending from combined 28-08 + 02-09 ABSA proceeds → CB's own projected total).
 
 // BTC end-of-period 31-12-2027 prices in EUR (power-law projections by @Giovann35084111)
 // Power law formula: P_USD = 10^(-17.3) * days^5.82, converted to EUR /1.08, rounded to nearest 1K.
 const BTC_END_EUR = { bear: 105000, fair: 188000, bull: 409000 };
 const TARGET_END_DATE = new Date('2027-12-31').getTime();
 
-// Warrants per CB 28-08-2026 press release. Warrants 2026-06/07/08 issued as part of ABSA private placement.
+// Warrants per CB 02-09-2026 press release. Warrants 2026-06/07/08 expanded via second Adam-Back solo ABSA on 02-09-2026.
 // All warrant tranches carry an accelerated-exercise clause: VWAP > 130% × strike for 20 consecutive trading days
 // triggers a 20-day exercise window (matches FORCED_MULT). Reverse stock split on 08-09-2026 will adjust strikes ×10.
+// Note: Warrants 2026-01 and 2026-02 also carry an mNAV 1.1 floor — exercise price = max(strike, €-equiv of mNAV 1.1).
 const WARRANTS = [
   { id: '2026-01', count: 27390910,  strike: 1.01 },
   { id: '2026-02', count: 10000000,  strike: 0.84 },
   { id: '2026-03', count: 46077688,  strike: 0.86 },
   { id: '2026-04', count: 23038844,  strike: 1.12 },
   { id: '2026-05', count: 23038844,  strike: 1.46 },
-  { id: '2026-06', count: 72438140,  strike: 0.75 }, // ABSA — 2 per share
-  { id: '2026-07', count: 36219070,  strike: 0.98 }, // ABSA — 1 per share
-  { id: '2026-08', count: 36219070,  strike: 1.27 }, // ABSA — 1 per share
+  { id: '2026-06', count: 98800200,  strike: 0.75 }, // ABSA — 2 per share × (28-08 + 02-09) placements
+  { id: '2026-07', count: 49400100,  strike: 0.98 }, // ABSA — 1 per share × (28-08 + 02-09) placements
+  { id: '2026-08', count: 49400100,  strike: 1.27 }, // ABSA — 1 per share × (28-08 + 02-09) placements
 ];
 
 // Outstanding OCAs per CB press release 28-08-2026 — full authoritative table (holders + shares on conversion).
