@@ -150,12 +150,12 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-sats">0</div>
     <div class="cb-stat-label">Sats / share</div>
-    <div class="cb-stat-sub" id="r-sats-now">today ~7,486</div>
+    <div class="cb-stat-sub" id="r-sats-now">today ~7,366</div>
   </div>
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-shares">0M</div>
     <div class="cb-stat-label">Final shares</div>
-    <div class="cb-stat-sub" id="r-share-mult">— vs 38M</div>
+    <div class="cb-stat-sub" id="r-share-mult">— vs 38.3M</div>
   </div>
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-drag">0%</div>
@@ -325,10 +325,10 @@ let CURRENT_BTC_PRICE = 67500;  // live-overridden by fetchLivePrices() (CoinGec
 const USD_EUR = 1.08;
 const GENESIS = new Date('2009-01-03').getTime();
 const NOW_DATE = new Date('2026-05-13').getTime();
-let BASIC_SHARES = 37.97e6;          // live-overridable; post 08-09-2026 reverse stock split 10:1 (was 379,706,840 → 37,970,684).
-let FULLY_DILUTED_SHARES = 47.03e6;  // live-overridable; post 08-09-2026 reverse split (was 470,277,921 → 47,027,792). FD excludes warrant potential per CB's diluted-basis definition.
+let BASIC_SHARES = 38.25e6;          // live-overridable; per 07-09-2026 KPI post reverse split (382,506,040 ÷10 = 38,250,604). Includes 02-09 Adam Back ABSA + 2.8M ATM TOBAM tranche settled 10-21 aug.
+let FULLY_DILUTED_SHARES = 47.80e6;  // live-overridable; per 07-09-2026 KPI post reverse split (477,977,121 ÷10 = 47,797,712). Includes basic + 88.7M OCAs + 1.8M free + 4.9M indicative reserve (reserve restored per 07-09 PR footnote iv).
 const FORCED_MULT = 1.30;
-let TODAY_BTC = 3521;                // live-overridable; per 02-09-2026 post-ABSA (3,145 confirmed + 376 BTC pending from combined 28-08 + 02-09 ABSA proceeds → CB's own projected total). Not affected by reverse split.
+let TODAY_BTC = 3521;                // live-overridable; per 07-09-2026 CONFIRMED (376 BTC acquired for €25.3M using combined ABSA + ATM proceeds). Not affected by reverse split.
 
 // BTC end-of-period 31-12-2027 prices in EUR (power-law projections by @Giovann35084111)
 // Power law formula: P_USD = 10^(-17.3) * days^5.82, converted to EUR /1.08, rounded to nearest 1K.
