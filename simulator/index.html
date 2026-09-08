@@ -117,7 +117,7 @@ table.cb-table td.split { color: #FF8A3D; }
 
   <div style="display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 10px 12px; background: rgba(255,92,0,0.06); border: 0.5px solid rgba(255,92,0,0.2); border-radius: 8px;">
     <span style="font-size: 11px; color: #FF8A3D; font-weight: 500;">Capital B</span>
-    <span style="font-size: 10px; color: rgba(255,255,255,0.45);">· current shares + treasury as of <span id="data-asof">2026-09-02</span> · verify on <a href="https://bitcointreasuries.net/" target="_blank" style="color:#FF8A3D;text-decoration:none;">bitcointreasuries.net</a></span>
+    <span style="font-size: 10px; color: rgba(255,255,255,0.45);">· current shares + treasury as of <span id="data-asof">2026-09-08</span> (post 10:1 reverse split) · verify on <a href="https://bitcointreasuries.net/" target="_blank" style="color:#FF8A3D;text-decoration:none;">bitcointreasuries.net</a></span>
     <button onclick="resetToCapitalB()" style="margin-left: auto; background: transparent; border: 0.5px solid rgba(255,92,0,0.4); color: #FF8A3D; font-size: 10px; padding: 4px 10px; border-radius: 5px; cursor: pointer; font-family: inherit;">reset</button>
   </div>
 
@@ -198,7 +198,7 @@ table.cb-table td.split { color: #FF8A3D; }
 const SAT = 1e8;
 const PRICE_POINTS = [100000, 250000, 500000, 750000, 1000000]; // €
 const CAPITAL_B = {
-  shares: 470.3e6, btc0: 3521, months: 18, btcN: 11000, mnav: 3, btcprice: 181000,
+  shares: 47.03e6, btc0: 3521, months: 18, btcN: 11000, mnav: 3, btcprice: 181000,
 };
 const STATE = Object.assign({}, CAPITAL_B);
 
