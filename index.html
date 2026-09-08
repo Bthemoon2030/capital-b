@@ -142,7 +142,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
   <div class="cb-hero-label">Projected share price</div>
   <div class="cb-hero-num" id="r-price">€0.00</div>
   <div class="cb-hero-date" id="r-date">on —</div>
-  <div class="cb-hero-mult" id="r-mult" style="display:none;">vs €0.64 today</div>
+  <div class="cb-hero-mult" id="r-mult" style="display:none;">vs €6.40 today</div>
   <div id="r-live" style="font-size: 10px; color: rgba(255,255,255,0.45); margin-top: 6px;">loading live price…</div>
 </div>
 
@@ -150,12 +150,12 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-sats">0</div>
     <div class="cb-stat-label">Sats / share</div>
-    <div class="cb-stat-sub" id="r-sats-now">today ~747</div>
+    <div class="cb-stat-sub" id="r-sats-now">today ~7,486</div>
   </div>
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-shares">0M</div>
     <div class="cb-stat-label">Final shares</div>
-    <div class="cb-stat-sub" id="r-share-mult">— vs 380M</div>
+    <div class="cb-stat-sub" id="r-share-mult">— vs 38M</div>
   </div>
   <div class="cb-card" style="text-align: center;">
     <div class="cb-stat-num" style="font-size: 20px;" id="r-drag">0%</div>
@@ -320,56 +320,56 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-let CURRENT_PRICE = 0.64;       // live-overridden by fetchLivePrices() (Yahoo via CORS proxy)
+let CURRENT_PRICE = 6.40;       // live-overridden by fetchLivePrices() (Yahoo via CORS proxy); post-08-09-2026 reverse split 10:1
 let CURRENT_BTC_PRICE = 67500;  // live-overridden by fetchLivePrices() (CoinGecko)
 const USD_EUR = 1.08;
 const GENESIS = new Date('2009-01-03').getTime();
 const NOW_DATE = new Date('2026-05-13').getTime();
-let BASIC_SHARES = 379.7e6;          // live-overridable; per 02-09-2026 post-Adam-Back ABSA (366,525,810 + 13,181,030 = 379,706,840). ⚠ Reverse stock split 10:1 on 08-09-2026 will divide by 10.
-let FULLY_DILUTED_SHARES = 470.3e6;  // live-overridable; per 02-09-2026 (470,277,921 = 379.7M basic + 88.7M OCAs + 1.8M free shares). FD excludes warrant potential per CB's diluted-basis definition.
+let BASIC_SHARES = 37.97e6;          // live-overridable; post 08-09-2026 reverse stock split 10:1 (was 379,706,840 → 37,970,684).
+let FULLY_DILUTED_SHARES = 47.03e6;  // live-overridable; post 08-09-2026 reverse split (was 470,277,921 → 47,027,792). FD excludes warrant potential per CB's diluted-basis definition.
 const FORCED_MULT = 1.30;
-let TODAY_BTC = 3521;                // live-overridable; per 02-09-2026 post-ABSA (3,145 confirmed + 376 BTC pending from combined 28-08 + 02-09 ABSA proceeds → CB's own projected total).
+let TODAY_BTC = 3521;                // live-overridable; per 02-09-2026 post-ABSA (3,145 confirmed + 376 BTC pending from combined 28-08 + 02-09 ABSA proceeds → CB's own projected total). Not affected by reverse split.
 
 // BTC end-of-period 31-12-2027 prices in EUR (power-law projections by @Giovann35084111)
 // Power law formula: P_USD = 10^(-17.3) * days^5.82, converted to EUR /1.08, rounded to nearest 1K.
 const BTC_END_EUR = { bear: 105000, fair: 188000, bull: 409000 };
 const TARGET_END_DATE = new Date('2027-12-31').getTime();
 
-// Warrants per CB 02-09-2026 press release. Warrants 2026-06/07/08 expanded via second Adam-Back solo ABSA on 02-09-2026.
+// Warrants POST 08-09-2026 reverse split 10:1 (counts ÷10, strikes ×10).
 // All warrant tranches carry an accelerated-exercise clause: VWAP > 130% × strike for 20 consecutive trading days
-// triggers a 20-day exercise window (matches FORCED_MULT). Reverse stock split on 08-09-2026 will adjust strikes ×10.
+// triggers a 20-day exercise window (matches FORCED_MULT).
 // Note: Warrants 2026-01 and 2026-02 also carry an mNAV 1.1 floor — exercise price = max(strike, €-equiv of mNAV 1.1).
 const WARRANTS = [
-  { id: '2026-01', count: 27390910,  strike: 1.01 },
-  { id: '2026-02', count: 10000000,  strike: 0.84 },
-  { id: '2026-03', count: 46077688,  strike: 0.86 },
-  { id: '2026-04', count: 23038844,  strike: 1.12 },
-  { id: '2026-05', count: 23038844,  strike: 1.46 },
-  { id: '2026-06', count: 98800200,  strike: 0.75 }, // ABSA — 2 per share × (28-08 + 02-09) placements
-  { id: '2026-07', count: 49400100,  strike: 0.98 }, // ABSA — 1 per share × (28-08 + 02-09) placements
-  { id: '2026-08', count: 49400100,  strike: 1.27 }, // ABSA — 1 per share × (28-08 + 02-09) placements
+  { id: '2026-01', count: 2739091, strike: 10.10 },
+  { id: '2026-02', count: 1000000, strike: 8.40 },
+  { id: '2026-03', count: 4607769, strike: 8.60 },
+  { id: '2026-04', count: 2303884, strike: 11.20 },
+  { id: '2026-05', count: 2303884, strike: 14.60 },
+  { id: '2026-06', count: 9880020, strike: 7.50 },  // ABSA — combined 28-08 + 02-09 placements
+  { id: '2026-07', count: 4940010, strike: 9.80 },  // ABSA — combined 28-08 + 02-09 placements
+  { id: '2026-08', count: 4940010, strike: 12.70 }, // ABSA — combined 28-08 + 02-09 placements
 ];
 
-// Outstanding OCAs per CB press release 28-08-2026 — full authoritative table (holders + shares on conversion).
+// Outstanding OCAs POST 08-09-2026 reverse split 10:1 (convPrice ×10, shares-on-conversion ÷10).
 // All tranches: coupon 0%, premium 30%, maturity 5y (06/2030-08/2030). B-01 fully converted 03-08-2026 → in BASIC_SHARES.
-// 821 BTC total claim.
+// 821 BTC total claim unchanged (BTC not affected by share split).
 const OCAS = [
-  { id: 'B-02', holder: 'Blockstream', btcClaim: 544, convPrice: 0.7072, issuedMo: -11, gatesRemoved: true },
-  { id: 'A-03', holder: 'TOBAM',       btcClaim: 62,  convPrice: 3.12,   issuedMo: -11, gatesRemoved: true },
-  { id: 'B-03', holder: 'Moonlight',   btcClaim: 48,  convPrice: 3.809,  issuedMo: -11, gatesRemoved: false },
-  { id: 'A-04', holder: 'TOBAM',       btcClaim: 52,  convPrice: 2.59,   issuedMo: -10, gatesRemoved: true },
-  { id: 'B-04', holder: 'Adam Back',   btcClaim: 53,  convPrice: 2.59,   issuedMo: -10, gatesRemoved: true },
-  { id: 'A-05', holder: 'TOBAM',       btcClaim: 62,  convPrice: 1.83,   issuedMo: -9,  gatesRemoved: true },
+  { id: 'B-02', holder: 'Blockstream', btcClaim: 544, convPrice: 7.072,  issuedMo: -11, gatesRemoved: true },
+  { id: 'A-03', holder: 'TOBAM',       btcClaim: 62,  convPrice: 31.20,  issuedMo: -11, gatesRemoved: true },
+  { id: 'B-03', holder: 'Moonlight',   btcClaim: 48,  convPrice: 38.09,  issuedMo: -11, gatesRemoved: false },
+  { id: 'A-04', holder: 'TOBAM',       btcClaim: 52,  convPrice: 25.90,  issuedMo: -10, gatesRemoved: true },
+  { id: 'B-04', holder: 'Adam Back',   btcClaim: 53,  convPrice: 25.90,  issuedMo: -10, gatesRemoved: true },
+  { id: 'A-05', holder: 'TOBAM',       btcClaim: 62,  convPrice: 18.30,  issuedMo: -9,  gatesRemoved: true },
 ];
 
-// Authoritative shares issued on full conversion per CB 28-08-2026 OCA table.
+// Authoritative shares issued on full conversion, POST reverse split (÷10).
 const OCA_SHARES = {
-  'B-02': 78166611,
-  'A-03': 1923076,
-  'B-03': 1210337,
-  'A-04': 1930501,
-  'B-04': 1947884,
-  'A-05': 3551912,
+  'B-02': 7816661,
+  'A-03': 192308,
+  'B-03': 121034,
+  'A-04': 193050,
+  'B-04': 194788,
+  'A-05': 355191,
 };
 
 const targets = [
