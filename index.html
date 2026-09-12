@@ -96,7 +96,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
 .cb-tranche-row .status.shares { background: rgba(135,170,255,0.18); color: #99b8ff; }
 .cb-tranche-row .status.out { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.45); }
 .cb-tranche-row .count { font-weight: 500; color: #fff; font-variant-numeric: tabular-nums; font-size: 11px; text-align: right; }
-.cb-tranche-row .count small { color: rgba(255,255,255,0.45); font-size: 9px; }
+.cb-tranche-row .count small { display: block; color: rgba(255,255,255,0.45); font-size: 9px; margin-top: 2px; }
 .cb-slider-row { margin-bottom: 4px; }
 .cb-slider-label { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px; gap: 8px; }
 .cb-slider-label > span:first-child { flex: 1; }
@@ -773,7 +773,8 @@ function renderWarrants(warrantState) {
       statusLabel = 'not yet';
       statusClass = 'out';
     }
-    return `<div class="cb-tranche-row"><div class="tag">${w.id}</div><div class="info">€${w.strike.toFixed(2)} strike<small>trigger €${trigger.toFixed(2)}</small></div><div class="count">${(w.count/1e6).toFixed(1)}M</div><div class="status ${statusClass}">${statusLabel}</div></div>`;
+    const cashIfExercised = w.count * w.strike;
+    return `<div class="cb-tranche-row"><div class="tag">${w.id}</div><div class="info">€${w.strike.toFixed(2)} strike<small>trigger €${trigger.toFixed(2)}</small></div><div class="count">${(w.count/1e6).toFixed(1)}M shares<small>€${(cashIfExercised/1e6).toFixed(1)}M cash</small></div><div class="status ${statusClass}">${statusLabel}</div></div>`;
   }).join('');
 }
 
