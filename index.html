@@ -312,7 +312,7 @@ body { background: #0a0a0a; margin: 0; padding: 20px 12px; font-family: -apple-s
 <div class="cb-nfa">NFA of course, just math — <a href="https://twitter.com/Bthemoon2030" target="_blank">@Bthemoon2030</a></div>
 
 <div class="cb-caveat">
-  Focused on the 20-month horizon (today through end of 2027) where Capital B's current capital stack is most relevant. BTC price follows an exponential path from today's actual price to the band's 31-12-2027 power-law projection (@Giovann35084111). BTC accumulation assumed linear. Each month: cash inflows (warrants exercised when share ≥ strike × 1.30; ATM if mNAV ≥ floor and cap not exhausted; filler instruments if cash gap remains) buy BTC at that month's BTC price. Share price = (BTC stack × BTC price × mNAV) / shares outstanding, computed iteratively for convergence. OCAs convert when share ≥ conv × holder-trigger; only Moonlight (B-03) still has original gates so its holder needs share ≥ conv to convert voluntarily. Per-tranche BTC allocation per CEBE Tracker estimates.
+  Focused on the horizon from today through end of 2027, where Capital B's current capital stack is most relevant. BTC price follows an exponential path from today's actual price to the band's 31-12-2027 power-law projection (@Giovann35084111). BTC accumulation assumed linear. Each month: cash inflows (warrants exercised when share ≥ strike × 1.30; ATM if mNAV ≥ floor and cap not exhausted; filler instruments if cash gap remains) buy BTC at that month's BTC price. Share price = (BTC stack × BTC price × mNAV) / shares outstanding, computed iteratively for convergence. OCAs convert when share ≥ conv × holder-trigger; only Moonlight (B-03) still has original gates so its holder needs share ≥ conv to convert voluntarily. Per-tranche BTC allocation per CEBE Tracker estimates.
 </div>
 
 </div>
@@ -324,7 +324,8 @@ let CURRENT_PRICE = 6.40;       // live-overridden by fetchLivePrices() (Capital
 let CURRENT_BTC_PRICE = 67500;  // live-overridden by fetchLivePrices() (CoinGecko)
 const USD_EUR = 1.08;
 const GENESIS = new Date('2009-01-03').getTime();
-const NOW_DATE = new Date('2026-05-13').getTime();
+// "Now" = today (local midnight), so the model always runs from today to 31-12-2027 (was fixed at 13-05-2026).
+const NOW_DATE = (() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); })();
 // Capital B KPIs: live-overridden by fetchLivePrices() (Capital B analytics API = the KPI tables in CB's press releases).
 // The values here are the silent fallback, per CB KPI 28-09-2026; while they are in use the "today" lines stay hidden.
 let BASIC_SHARES = 38467809;         // Issued common shares
@@ -336,6 +337,19 @@ let TODAY_BTC = 3538;                // Total BTC holdings
 // Power law formula: P_USD = 10^(-17.3) * days^5.82, converted to EUR /1.08, rounded to nearest 1K.
 const BTC_END_EUR = { bear: 105000, fair: 188000, bull: 409000 };
 const TARGET_END_DATE = new Date('2027-12-31').getTime();
+
+// Calendar months from "now" to a 'YYYY-MM' month (negative = past): an OCA issued Jun 2025 is -11 in May 2026, -16 in Oct 2026.
+function monthsFromNow(ym) {
+  const now = new Date(NOW_DATE), [y, m] = ym.split('-').map(Number);
+  return (y - now.getFullYear()) * 12 + (m - 1 - now.getMonth());
+}
+
+// Whole months from "now" that fit before the end date: 19 on 13-05-2026, 14 on 27-10-2026.
+function monthsUntil(endMs) {
+  const now = new Date(NOW_DATE), end = new Date(endMs);
+  const m = (end.getFullYear() - now.getFullYear()) * 12 + (end.getMonth() - now.getMonth()) - (end.getDate() < now.getDate() ? 1 : 0);
+  return Math.max(1, m);
+}
 
 // Warrants POST 08-09-2026 reverse split 10:1 (counts ÷10, strikes ×10).
 // All warrant tranches carry an accelerated-exercise clause: VWAP > 130% × strike for 20 consecutive trading days
@@ -355,13 +369,15 @@ const WARRANTS = [
 // Outstanding OCAs POST 08-09-2026 reverse split 10:1 (convPrice ×10, shares-on-conversion ÷10).
 // All tranches: coupon 0%, premium 30%, maturity 5y (06/2030-08/2030). B-01 fully converted 03-08-2026 → in BASIC_SHARES.
 // 821 BTC total claim unchanged (BTC not affected by share split).
+// issuedMo = issue month relative to "now" (issued 13-06, 16-06, 19-06, 04-07, 05-07 and 01-08-2025); it drives the
+// 3-year anniversary (forced conversion) and the 5-year maturity in simulate().
 const OCAS = [
-  { id: 'B-02', holder: 'Blockstream', btcClaim: 544, convPrice: 7.072,  issuedMo: -11, gatesRemoved: true },
-  { id: 'A-03', holder: 'TOBAM',       btcClaim: 62,  convPrice: 31.20,  issuedMo: -11, gatesRemoved: true },
-  { id: 'B-03', holder: 'Moonlight',   btcClaim: 48,  convPrice: 38.09,  issuedMo: -11, gatesRemoved: false },
-  { id: 'A-04', holder: 'TOBAM',       btcClaim: 52,  convPrice: 25.90,  issuedMo: -10, gatesRemoved: true },
-  { id: 'B-04', holder: 'Adam Back',   btcClaim: 53,  convPrice: 25.90,  issuedMo: -10, gatesRemoved: true },
-  { id: 'A-05', holder: 'TOBAM',       btcClaim: 62,  convPrice: 18.30,  issuedMo: -9,  gatesRemoved: true },
+  { id: 'B-02', holder: 'Blockstream', btcClaim: 544, convPrice: 7.072,  issuedMo: monthsFromNow('2025-06'), gatesRemoved: true },
+  { id: 'A-03', holder: 'TOBAM',       btcClaim: 62,  convPrice: 31.20,  issuedMo: monthsFromNow('2025-06'), gatesRemoved: true },
+  { id: 'B-03', holder: 'Moonlight',   btcClaim: 48,  convPrice: 38.09,  issuedMo: monthsFromNow('2025-06'), gatesRemoved: false },
+  { id: 'A-04', holder: 'TOBAM',       btcClaim: 52,  convPrice: 25.90,  issuedMo: monthsFromNow('2025-07'), gatesRemoved: true },
+  { id: 'B-04', holder: 'Adam Back',   btcClaim: 53,  convPrice: 25.90,  issuedMo: monthsFromNow('2025-07'), gatesRemoved: true },
+  { id: 'A-05', holder: 'TOBAM',       btcClaim: 62,  convPrice: 18.30,  issuedMo: monthsFromNow('2025-08'), gatesRemoved: true },
 ];
 
 // Authoritative shares issued on full conversion, POST reverse split (÷10).
@@ -375,7 +391,7 @@ const OCA_SHARES = {
 };
 
 const targets = [
-  { y: 'FY26-27', low: 7000, high: 15000, mo: 19, endYear: 2027 },
+  { y: 'FY26-27', low: 7000, high: 15000, mo: monthsUntil(TARGET_END_DATE), endYear: 2027 },
 ];
 
 const mnavOpts = [1, 2, 3, 4, 5, 6, 7, 8, 20];
