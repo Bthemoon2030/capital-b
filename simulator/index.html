@@ -117,7 +117,7 @@ table.cb-table td.split { color: #FF8A3D; }
 
   <div style="display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 10px 12px; background: rgba(255,92,0,0.06); border: 0.5px solid rgba(255,92,0,0.2); border-radius: 8px;">
     <span style="font-size: 11px; color: #FF8A3D; font-weight: 500;">Capital B</span>
-    <span style="font-size: 10px; color: rgba(255,255,255,0.45);">· current shares + treasury as of <span id="data-asof">2026-09-08</span> (post 10:1 split; CB 07-09 KPI) · verify on <a href="https://bitcointreasuries.net/" target="_blank" style="color:#FF8A3D;text-decoration:none;">bitcointreasuries.net</a></span>
+    <span id="data-live" style="font-size: 10px; color: rgba(255,255,255,0.45); visibility: hidden;">· current shares + treasury live from <a href="https://analytics.cptlb.com/" target="_blank" style="color:#FF8A3D;text-decoration:none;">Capital B analytics</a><span id="data-asof"></span></span>
     <button onclick="resetToCapitalB()" style="margin-left: auto; background: transparent; border: 0.5px solid rgba(255,92,0,0.4); color: #FF8A3D; font-size: 10px; padding: 4px 10px; border-radius: 5px; cursor: pointer; font-family: inherit;">reset</button>
   </div>
 
@@ -197,10 +197,13 @@ table.cb-table td.split { color: #FF8A3D; }
 // ---------------------------------------------------------------------------
 const SAT = 1e8;
 const PRICE_POINTS = [100000, 250000, 500000, 750000, 1000000]; // €
+// shares + btc0 come live from Capital B's analytics API (fetchCapitalBKpi). The values here are the
+// silent fallback, per CB KPI 28-09-2026 (fully diluted shares, total BTC holdings).
 const CAPITAL_B = {
-  shares: 47.80e6, btc0: 3521, months: 18, btcN: 11000, mnav: 3, btcprice: 181000,
+  shares: 48014921, btc0: 3538, months: 18, btcN: 11000, mnav: 3, btcprice: 181000,
 };
 const STATE = Object.assign({}, CAPITAL_B);
+let kpiPending = true; // the first render waits for the live KPIs, so the two "current" fields never flash a fallback value
 
 // ---------------------------------------------------------------------------
 // Formatting
@@ -306,7 +309,7 @@ function renderMetrics(e) {
   document.getElementById('m-shares').textContent = fmtShares(e.shares);
   document.getElementById('m-shares-mult').textContent = (e.shares / e.sharesNow).toFixed(2) + '× vs now (' + fmtShares(e.sharesNow) + ')';
   document.getElementById('m-sats').textContent = fmtSats(e.sats);
-  document.getElementById('m-sats-mult').textContent = 'now ~' + fmtSats(e.satsNow);
+  document.getElementById('m-sats-mult').textContent = 'now ' + e.satsNow.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   document.getElementById('m-stack').textContent = fmtBTC(e.treas);
   document.getElementById('m-stack-delta').textContent = '+' + Math.round(e.stackDelta).toLocaleString('en-US') + ' ₿ over period';
   document.getElementById('m-mnav').textContent = STATE.mnav.toFixed(1) + '×';
@@ -354,12 +357,14 @@ function syncInputs() {
 // Actions
 // ---------------------------------------------------------------------------
 function resetToCapitalB() {
+  if (kpiPending) return;
   Object.assign(STATE, CAPITAL_B);
   syncInputs();
   compute();
 }
 
 function compute() {
+  if (kpiPending) return;
   STATE.dilution = computeDilution();
   const proj = project();
   if (!proj) return;
@@ -386,8 +391,53 @@ wire('i-btcN', 'btcN');
 wire('i-mnav', 'mnav');
 wire('i-btcprice', 'btcprice');
 
-syncInputs();
-compute();
+// ---------------------------------------------------------------------------
+// Live Capital B KPIs — fully diluted shares + BTC held from Capital B's own analytics API: the data behind
+// analytics.cptlb.com, equal to the KPI tables in CB's press releases. CORS-open, no key, cached 60 s.
+// On failure the CAPITAL_B fallback is used silently and the "live from" line stays hidden.
+// ---------------------------------------------------------------------------
+const CB_API = 'https://analytics.cptlb.com/api/companies/the-blockchain-group/prepared-chart-data';
+const isPos = x => typeof x === 'number' && isFinite(x) && x > 0;
+
+async function fetchJson(url, ms) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), ms);
+  try {
+    const r = await fetch(url, { signal: ctrl.signal });
+    return r.ok ? await r.json() : null;
+  } catch (e) { return null; } finally { clearTimeout(timer); }
+}
+
+// Date of the KPI in force = the last day CB's KPI series changed (a press-release date, e.g. 28-09-2026).
+function kpiAsOf(j) {
+  try {
+    const v = j.values, t = j.timeline, keys = ['btcHeld', 'issuedShares', 'fullyDilutedShares'];
+    const day = i => { const d = new Date(t.startDate + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + i); return d; };
+    const n = v.btcHeld.length;
+    if (day(n - 1).toISOString().slice(0, 10) !== t.endDate) return null; // one value per calendar day, or no date
+    for (let i = n - 1; i > 0; i--) {
+      if (keys.some(k => v[k][i] !== v[k][i - 1])) {
+        const d = day(i);
+        return String(d.getUTCDate()).padStart(2, '0') + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') + '-' + d.getUTCFullYear();
+      }
+    }
+  } catch (e) { /* no date */ }
+  return null;
+}
+
+async function fetchCapitalBKpi() {
+  const j = await fetchJson(CB_API, 8000);
+  const l = j && j.latest;
+  const line = document.getElementById('data-live');
+  if (!l || !isPos(l.btcHeld) || !isPos(l.fullyDilutedShares)) { line.style.display = 'none'; return; }
+  CAPITAL_B.shares = STATE.shares = l.fullyDilutedShares; // reset button → live values too
+  CAPITAL_B.btc0 = STATE.btc0 = l.btcHeld;
+  const asOf = kpiAsOf(j);
+  document.getElementById('data-asof').textContent = asOf ? ' (KPI ' + asOf + ')' : '';
+  line.style.visibility = 'visible';
+}
+
+fetchCapitalBKpi().finally(() => { kpiPending = false; syncInputs(); compute(); });
 
 // ---------------------------------------------------------------------------
 // Live BTC/EUR (CoinGecko) — shown as reference, not auto-applied to inputs
