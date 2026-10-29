@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*,*::before,*::after{box-sizing:border-box}body{margin:0;font:14px/1.5 system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>Nova's Tafels</title>
+<title>Tafels Oefenen</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@500;700;800&display=swap">
 <style>
@@ -233,7 +233,7 @@ button:focus-visible { outline: 3px solid var(--t6); outline-offset: 3px; }
   <!-- HOME -->
   <section class="screen" id="home">
     <div style="display:flex;flex-direction:column;gap:8px">
-      <h1>Hoi Nova!</h1>
+      <h1>Tafels oefenen</h1>
       <p class="lead">Kies welke tafels je wilt oefenen en druk op Start.</p>
     </div>
 
@@ -338,11 +338,11 @@ button:focus-visible { outline: 3px solid var(--t6); outline-offset: 3px; }
 
 <script>
 (function () {
-  var KEY = 'nova-tafels-v2';
+  var KEY = 'tafels-oefenen-v1';
   var ROUND = 10;
   var lateTimer = null;
   var COLORS = { 6: '--t6', 7: '--t7', 8: '--t8' };
-  var PRAISE = ['Goed zo!', 'Super!', 'Top, Nova!', 'Knap hoor!', 'Helemaal goed!', 'Yes!'];
+  var PRAISE = ['Goed zo!', 'Super!', 'Top!', 'Knap hoor!', 'Helemaal goed!', 'Yes!'];
 
   var store = { sel: [6, 7, 8], stats: {} };
   try {
@@ -627,7 +627,7 @@ button:focus-visible { outline: 3px solid var(--t6); outline-offset: 3px; }
     $('stars').setAttribute('aria-label', stars + ' van 3 sterren');
     $('score').innerHTML = n + '<small> / ' + ROUND + '</small>';
     $('scoreText').textContent = 'goed binnen ' + limit() + ' seconden';
-    $('doneTitle').textContent = n === ROUND ? 'Alles goed, Nova!' : n >= 7 ? 'Goed gedaan, Nova!' : 'Lekker geoefend, Nova!';
+    $('doneTitle').textContent = n === ROUND ? 'Alles goed!' : n >= 7 ? 'Goed gedaan!' : 'Lekker geoefend!';
     $('misses').innerHTML = q.missed.map(function (it) {
       return '<span class="chip">' + it.f + ' × ' + it.t + ' = ' + (it.t * it.f) + '</span>';
     }).join('');
