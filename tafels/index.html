@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*,*::before,*::after{box-sizing:border-box}body{margin:0;font:14px/1.5 system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Nova's Tafels</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: one centred column on squared math-notebook paper; one task per screen, big touch targets. */
+:root {
+  --paper: #f6f9fc;
+  --grid: rgba(60, 110, 170, .10);
+  --card: #ffffff;
+  --ink: #1c2838;
+  --muted: #5d6b7e;
+  --line: #d7e1ec;
+  --key: #eef3f9;
+  --t6: #2f6fdf;
+  --t7: #7a4fd6;
+  --t8: #17946a;
+  --tx: #c27a12;
+  --ok: #17946a;
+  --ok-soft: #dff4ea;
+  --oops: #d9692b;
+  --oops-soft: #fdebdf;
+  --star: #f2b51c;
+  --display: "Baloo 2", "Nunito", ui-rounded, system-ui, sans-serif;
+  --body: "Nunito", ui-rounded, system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #141b26; --grid: rgba(140, 180, 230, .07); --card: #1d2633; --ink: #eef3f9; --muted: #9aa8bb;
+    --line: #2d3a4b; --key: #263243; --t6: #6b9cf5; --t7: #a888f0; --t8: #3fc293; --tx: #e3a548;
+    --ok: #3fc293; --ok-soft: #173a2e; --oops: #f08c55; --oops-soft: #3d261a; --star: #f5c542;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #141b26; --grid: rgba(140, 180, 230, .07); --card: #1d2633; --ink: #eef3f9; --muted: #9aa8bb;
+  --line: #2d3a4b; --key: #263243; --t6: #6b9cf5; --t7: #a888f0; --t8: #3fc293; --tx: #e3a548;
+  --ok: #3fc293; --ok-soft: #173a2e; --oops: #f08c55; --oops-soft: #3d261a; --star: #f5c542;
+  color-scheme: dark;
+}
+
+html, body { height: 100%; }
+body {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  -webkit-tap-highlight-color: transparent;
+}
+.app {
+  max-width: 460px; margin: 0 auto; min-height: 100%;
+  display: flex; flex-direction: column; padding-block: 20px 28px;
+}
+.screen { display: flex; flex-direction: column; gap: 20px; flex: 1; }
+h1, h2 { font-family: var(--display); font-weight: 800; margin: 0; line-height: 1.05; text-wrap: balance; }
+h1 { font-size: 2.6rem; }
+h2 { font-size: 1.6rem; }
+p { margin: 0; }
+.lead { color: var(--muted); font-size: 1.05rem; }
+.label { font-size: .8rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
+button:focus-visible { outline: 3px solid var(--t6); outline-offset: 3px; }
+
+.big-btn {
+  font-family: var(--display); font-weight: 800; font-size: 1.5rem;
+  background: var(--ink); color: var(--paper);
+  border-radius: 18px; padding: 16px 20px; width: 100%;
+  box-shadow: 0 4px 0 rgba(0,0,0,.25);
+  transition: transform .08s;
+}
+.big-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,.25); }
+.big-btn:disabled { opacity: .35; cursor: default; }
+.ghost-btn {
+  font-weight: 800; color: var(--muted); padding: 10px 14px; border-radius: 12px;
+  background: var(--card); border: 2px solid var(--line);
+}
+
+/* ---------- Home ---------- */
+.tables { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.tcard {
+  --c: var(--tx);
+  background: var(--card); border: 3px solid var(--line); border-radius: 20px;
+  padding: 12px 8px 14px; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  transition: border-color .15s, transform .1s;
+}
+.tcard:active { transform: scale(.97); }
+.tcard[aria-pressed="true"] { border-color: var(--c); background: color-mix(in srgb, var(--c) 10%, var(--card)); }
+.tcard .num { font-family: var(--display); font-weight: 800; font-size: 2.8rem; line-height: 1; color: var(--c); }
+.tcard .word { font-size: .85rem; font-weight: 800; color: var(--muted); }
+.tcard .check {
+  width: 26px; height: 26px; border-radius: 50%; border: 3px solid var(--line);
+  display: grid; place-items: center; color: var(--card); font-weight: 800; font-size: .9rem;
+}
+.tcard[aria-pressed="true"] .check { background: var(--c); border-color: var(--c); }
+.dots { display: flex; gap: 3px; flex-wrap: wrap; justify-content: center; max-width: 90px; }
+.dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); }
+.dots i.on { background: var(--c); }
+
+.more-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.mini {
+  --c: var(--tx);
+  min-width: 46px; height: 46px; border-radius: 14px; font-family: var(--display); font-weight: 800; font-size: 1.3rem;
+  background: var(--card); border: 2px solid var(--line); color: var(--muted);
+}
+.mini[aria-pressed="true"] { border-color: var(--c); color: var(--c); background: color-mix(in srgb, var(--c) 10%, var(--card)); }
+.home-foot { margin-top: auto; display: flex; flex-direction: column; gap: 12px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.row > * { flex: 1; }
+.hint { color: var(--muted); font-size: .9rem; text-align: center; }
+
+/* ---------- Quiz ---------- */
+.topbar { display: flex; align-items: center; gap: 12px; }
+.bar { flex: 1; height: 14px; border-radius: 99px; background: var(--card); border: 2px solid var(--line); overflow: hidden; }
+.bar span { display: block; height: 100%; width: 0; background: var(--ok); border-radius: 99px; transition: width .3s; }
+.count { font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 3.5em; text-align: right; }
+
+.sum {
+  background: var(--card); border: 3px solid var(--line); border-radius: 24px;
+  padding: 26px 12px 22px; text-align: center; display: flex; flex-direction: column; gap: 10px; align-items: center;
+}
+.sum .q {
+  font-family: var(--display); font-weight: 800; font-size: clamp(3rem, 15vw, 4.4rem); line-height: 1;
+  font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: .22em; flex-wrap: wrap; justify-content: center;
+}
+.sum .q .x { color: var(--muted); font-size: .75em; }
+.answer {
+  min-width: 2.2em; padding: 0 .15em; border-radius: 16px; border: 3px dashed var(--line);
+  color: var(--ink); min-height: 1.15em; display: inline-block;
+}
+.answer.empty::after { content: "?"; color: var(--line); }
+.sum.good { border-color: var(--ok); background: var(--ok-soft); }
+.sum.good .answer { border-style: solid; border-color: var(--ok); color: var(--ok); }
+.sum.bad { border-color: var(--oops); background: var(--oops-soft); }
+.sum.bad .answer { border-style: solid; border-color: var(--oops); color: var(--oops); }
+.feedback { font-family: var(--display); font-weight: 800; font-size: 1.35rem; min-height: 1.6em; }
+.sum.good .feedback { color: var(--ok); }
+.sum.bad .feedback { color: var(--oops); }
+.timer { width: 70%; height: 10px; border-radius: 99px; background: var(--line); overflow: hidden; transition: background .2s; }
+.timer span { display: block; height: 100%; width: 100%; background: var(--t6); border-radius: 99px; transform-origin: left; }
+.timer.run span { animation: drain 3s linear forwards; }
+.timer.late { background: var(--oops-soft); }
+.timer.stop span { animation-play-state: paused; }
+@keyframes drain { to { transform: scaleX(0); } }
+.time { font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; min-height: 1.3em; }
+.goal { display: flex; align-items: center; gap: 12px; background: var(--card); border: 2px solid var(--line); border-radius: 16px; padding: 12px 14px; }
+.goal b { font-family: var(--display); font-size: 1.9rem; line-height: 1; color: var(--t6); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.goal p { font-size: .95rem; color: var(--muted); }
+.chip.slow { background: color-mix(in srgb, var(--t6) 14%, var(--card)); color: var(--t6); }
+.modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mode {
+  background: var(--card); border: 3px solid var(--line); border-radius: 16px; padding: 12px 10px;
+  font-family: var(--display); font-weight: 800; font-size: 1.2rem; line-height: 1.15;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.mode small { font-family: var(--body); font-size: .85rem; color: var(--muted); }
+.mode[aria-pressed="true"] { border-color: var(--t6); background: color-mix(in srgb, var(--t6) 10%, var(--card)); }
+.say { display: flex; flex-direction: column; gap: 10px; }
+.say-btn { min-height: 150px; font-size: 2.2rem; background: var(--t6); color: #fff; }
+.judge { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.judge .big-btn { min-height: 90px; }
+.judge-ok { background: var(--ok); color: #fff; }
+.judge-bad { background: var(--oops); color: #fff; }
+.say-hint { text-align: center; color: var(--muted); font-weight: 700; }
+.retry-tag { font-size: .8rem; font-weight: 800; color: var(--oops); letter-spacing: .06em; text-transform: uppercase; min-height: 1.2em; }
+
+.shake { animation: shake .35s; }
+@keyframes shake { 20%,60% { transform: translateX(-8px); } 40%,80% { transform: translateX(8px); } }
+.pop { animation: pop .3s; }
+@keyframes pop { 50% { transform: scale(1.05); } }
+
+.pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.key {
+  font-family: var(--display); font-weight: 800; font-size: 1.9rem; height: 64px; border-radius: 16px;
+  background: var(--card); border: 2px solid var(--line); box-shadow: 0 3px 0 var(--line);
+  transition: transform .06s;
+}
+.key:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--line); }
+.key.del { font-size: 1.3rem; color: var(--muted); }
+.key.ok { background: var(--ok); color: #fff; border-color: var(--ok); box-shadow: 0 3px 0 color-mix(in srgb, var(--ok) 60%, #000); font-size: 1.5rem; }
+.key.ok:disabled { opacity: .35; cursor: default; }
+.next-wrap { display: flex; }
+
+/* ---------- Done ---------- */
+.result { background: var(--card); border: 3px solid var(--line); border-radius: 24px; padding: 24px 18px; text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.stars { display: flex; gap: 6px; }
+.stars svg { width: 54px; height: 54px; }
+.stars .s-on { fill: var(--star); }
+.stars .s-off { fill: var(--line); }
+.score { font-family: var(--display); font-weight: 800; font-size: 3.4rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.score small { font-size: .45em; color: var(--muted); }
+.misses { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.chip { background: var(--oops-soft); color: var(--oops); font-weight: 800; padding: 6px 12px; border-radius: 99px; font-variant-numeric: tabular-nums; }
+
+/* ---------- Look ---------- */
+.look-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+.list { background: var(--card); border: 3px solid var(--line); border-radius: 20px; padding: 6px 18px; }
+.list div {
+  display: grid; grid-template-columns: 2ch 1.4ch 2ch 1.4ch 3ch; gap: .45em; justify-content: center;
+  font-family: var(--display); font-weight: 800; font-size: 1.6rem; padding: 4px 0; border-bottom: 2px dashed var(--line);
+  font-variant-numeric: tabular-nums; text-align: right;
+}
+.list div:last-child { border-bottom: 0; }
+.list .op { color: var(--muted); text-align: center; }
+.list .res { color: var(--c, var(--ink)); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+@media (max-height: 640px) {
+  .key { height: 54px; }
+  .sum { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- HOME -->
+  <section class="screen" id="home">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <h1>Hoi Nova!</h1>
+      <p class="lead">Kies welke tafels je wilt oefenen en druk op Start.</p>
+    </div>
+
+    <div class="goal">
+      <b id="goalNum">0 / 30</b>
+      <p>sommen ken je al vlot: twee keer achter elkaar goed binnen de tijd. Doel: allemaal!</p>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span class="label">Zo geef je antwoord</span>
+      <div class="modes">
+        <button class="mode" id="modeType" data-mode="type">Typen<small>binnen 4 seconden</small></button>
+        <button class="mode" id="modeSay" data-mode="say">Hardop zeggen<small>binnen 3 seconden</small></button>
+      </div>
+    </div>
+
+    <div class="tables" id="mainTables"></div>
+    <p class="hint">Elk bolletje is een som die je vlot kent.</p>
+
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span class="label">Andere tafels</span>
+      <div class="more-row" id="moreTables"></div>
+    </div>
+
+    <div class="home-foot">
+      <button class="big-btn" id="startBtn">Start</button>
+      <button class="ghost-btn" id="lookBtn">Tafel bekijken</button>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="screen" id="quiz" hidden>
+    <div class="topbar">
+      <button class="ghost-btn" id="stopBtn" aria-label="Stoppen">✕</button>
+      <div class="bar"><span id="barFill"></span></div>
+      <span class="count" id="count">1 / 10</span>
+    </div>
+
+    <div class="sum" id="sumCard">
+      <span class="retry-tag" id="retryTag"></span>
+      <div class="q" id="qText" aria-live="polite">
+        <span id="qa">6</span><span class="x">×</span><span id="qb">7</span><span class="x">=</span><span class="answer empty" id="ans"></span>
+      </div>
+      <div class="timer" id="timer" aria-hidden="true"><span></span></div>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+      <div class="time" id="timeText"></div>
+      <div class="time" id="heard"></div>
+    </div>
+
+    <div class="pad" id="pad">
+      <button class="key" data-k="1">1</button><button class="key" data-k="2">2</button><button class="key" data-k="3">3</button>
+      <button class="key" data-k="4">4</button><button class="key" data-k="5">5</button><button class="key" data-k="6">6</button>
+      <button class="key" data-k="7">7</button><button class="key" data-k="8">8</button><button class="key" data-k="9">9</button>
+      <button class="key del" data-k="del" aria-label="Wissen">⌫ wis</button><button class="key" data-k="0">0</button><button class="key ok" data-k="ok" id="okBtn">OK</button>
+    </div>
+    <div class="say" id="sayWrap" hidden>
+      <button class="big-btn say-btn" id="saidBtn">Gezegd!</button>
+      <p class="say-hint" id="micLine"></p>
+      <p class="say-hint" id="sayHint">Zeg het antwoord hardop en tik dan op de knop.</p>
+      <div class="judge" id="judgeWrap" hidden>
+        <button class="big-btn judge-ok" id="judgeOk">✓ Goed</button>
+        <button class="big-btn judge-bad" id="judgeBad">✗ Fout</button>
+      </div>
+    </div>
+    <div class="next-wrap" id="nextWrap" hidden>
+      <button class="big-btn" id="nextBtn">Verder</button>
+    </div>
+  </section>
+
+  <!-- DONE -->
+  <section class="screen" id="done" hidden>
+    <h2 id="doneTitle">Klaar!</h2>
+    <div class="result">
+      <div class="stars" id="stars"></div>
+      <div class="score" id="score">8<small> / 10</small></div>
+      <p class="lead" id="scoreText">goed binnen 3 seconden</p>
+    </div>
+    <div id="missBlock" style="display:flex;flex-direction:column;gap:10px;align-items:center">
+      <span class="label">Deze nog even oefenen</span>
+      <div class="misses" id="misses"></div>
+    </div>
+    <div id="slowBlock" style="display:flex;flex-direction:column;gap:10px;align-items:center">
+      <span class="label">Goed, maar nog wat sneller</span>
+      <div class="misses" id="slows"></div>
+    </div>
+    <div class="home-foot">
+      <button class="big-btn" id="againBtn">Nog een keer</button>
+      <button class="ghost-btn" id="homeBtn">Andere tafels kiezen</button>
+    </div>
+  </section>
+
+  <!-- LOOK -->
+  <section class="screen" id="look" hidden>
+    <div class="topbar">
+      <button class="ghost-btn" id="lookBack">← Terug</button>
+    </div>
+    <h2>Tafel bekijken</h2>
+    <div class="look-tabs" id="lookTabs"></div>
+    <div class="list" id="lookList"></div>
+  </section>
+</div>
+
+<script>
+(function () {
+  var KEY = 'nova-tafels-v2';
+  var ROUND = 10;
+  var lateTimer = null;
+  var COLORS = { 6: '--t6', 7: '--t7', 8: '--t8' };
+  var PRAISE = ['Goed zo!', 'Super!', 'Top, Nova!', 'Knap hoor!', 'Helemaal goed!', 'Yes!'];
+
+  var store = { sel: [6, 7, 8], stats: {} };
+  try {
+    var raw = localStorage.getItem(KEY);
+    if (raw) { var p = JSON.parse(raw); if (p && p.sel && p.stats) store = p; }
+  } catch (e) {}
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
+  if (store.mode !== 'say') store.mode = 'type';
+  // Seconden per som: typen kost tijd, hardop zeggen niet.
+  function limit() { return store.mode === 'say' ? 3 : 4; }
+
+  function $(id) { return document.getElementById(id); }
+  function colorOf(t) { return 'var(' + (COLORS[t] || '--tx') + ')'; }
+  function stat(t, f) { var k = t + 'x' + f; return store.stats[k] || (store.stats[k] = { s: 0, m: 0 }); }
+  function known(t) { var n = 0; for (var f = 1; f <= 10; f++) if ((store.stats[t + 'x' + f] || {}).s >= 2) n++; return n; }
+
+  function show(id) {
+    ['home', 'quiz', 'done', 'look'].forEach(function (s) { $(s).hidden = s !== id; });
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------- Home ---------- */
+  function renderHome() {
+    var main = $('mainTables'); main.innerHTML = '';
+    [6, 7, 8].forEach(function (t) {
+      var b = document.createElement('button');
+      b.className = 'tcard'; b.style.setProperty('--c', colorOf(t));
+      b.setAttribute('aria-pressed', store.sel.indexOf(t) >= 0);
+      var k = known(t), dots = '';
+      for (var i = 0; i < 10; i++) dots += '<i class="' + (i < k ? 'on' : '') + '"></i>';
+      b.innerHTML = '<span class="check">✓</span><span class="num">' + t + '</span><span class="word">tafel van ' + t + '</span><span class="dots" aria-label="' + k + ' van 10 sommen gekend">' + dots + '</span>';
+      b.onclick = function () { toggle(t); };
+      main.appendChild(b);
+    });
+    var more = $('moreTables'); more.innerHTML = '';
+    [1, 2, 3, 4, 5, 9, 10].forEach(function (t) {
+      var b = document.createElement('button');
+      b.className = 'mini'; b.textContent = t;
+      b.setAttribute('aria-pressed', store.sel.indexOf(t) >= 0);
+      b.setAttribute('aria-label', 'tafel van ' + t);
+      b.onclick = function () { toggle(t); };
+      more.appendChild(b);
+    });
+    var tot = 0;
+    store.sel.forEach(function (t) { tot += known(t); });
+    $('goalNum').textContent = tot + ' / ' + store.sel.length * 10;
+    $('modeType').setAttribute('aria-pressed', store.mode === 'type');
+    $('modeSay').setAttribute('aria-pressed', store.mode === 'say');
+    $('startBtn').disabled = store.sel.length === 0;
+    $('startBtn').textContent = store.sel.length ? 'Start' : 'Kies eerst een tafel';
+  }
+  function toggle(t) {
+    var i = store.sel.indexOf(t);
+    if (i >= 0) store.sel.splice(i, 1); else store.sel.push(t);
+    store.sel.sort(function (a, b) { return a - b; });
+    save(); renderHome();
+  }
+
+  /* ---------- Round building: sums she gets wrong come back more often ---------- */
+  function buildRound() {
+    var pool = [];
+    store.sel.forEach(function (t) {
+      for (var f = 1; f <= 10; f++) {
+        var st = stat(t, f);
+        var w = 1 + st.m * 2 + (st.s < 2 ? 1 : 0) + (st.slow ? 2 : 0);
+        if (f === 1 || f === 10) w *= 0.4;
+        pool.push({ t: t, f: f, w: w });
+      }
+    });
+    var picked = [];
+    while (picked.length < ROUND && pool.length) {
+      var total = pool.reduce(function (a, p) { return a + p.w; }, 0);
+      var r = Math.random() * total, j = 0;
+      while (r > pool[j].w && j < pool.length - 1) { r -= pool[j].w; j++; }
+      picked.push(pool.splice(j, 1)[0]);
+    }
+    // shuffle and pick a random order (6 × 7 or 7 × 6)
+    for (var i = picked.length - 1; i > 0; i--) { var k = Math.floor(Math.random() * (i + 1)); var tmp = picked[i]; picked[i] = picked[k]; picked[k] = tmp; }
+    return picked.map(function (p) { return { t: p.t, f: p.f, flip: Math.random() < 0.5, retry: false }; });
+  }
+
+  /* ---------- Quiz ---------- */
+  var q = null; // { queue, i, fast, missed, slow, input, locked, start, lastKey }
+
+  function startRound() {
+    if (!store.sel.length) return;
+    q = { queue: buildRound(), i: 0, fast: 0, missed: [], slow: [], input: '', locked: false };
+    show('quiz'); renderQuestion();
+  }
+
+  function cur() { return q.queue[q.i]; }
+
+  function renderQuestion() {
+    var it = cur();
+    var a = it.flip ? it.f : it.t, b = it.flip ? it.t : it.f;
+    $('qa').textContent = a; $('qb').textContent = b;
+    q.input = ''; q.locked = false;
+    $('sumCard').className = 'sum';
+    $('feedback').textContent = '';
+    $('timeText').textContent = '';
+    $('retryTag').textContent = it.retry ? 'Nog een keer proberen' : '';
+    var tm = $('timer');
+    tm.firstElementChild.style.animationDuration = limit() + 's';
+    tm.className = 'timer'; void tm.offsetWidth; tm.className = 'timer run';
+    clearTimeout(lateTimer);
+    lateTimer = setTimeout(function () { if (!q.locked) tm.classList.add('late'); }, limit() * 1000);
+    q.start = q.lastKey = performance.now();
+    $('heard').textContent = '';
+    if (store.mode === 'say') listen();
+    micStatus();
+    var say = store.mode === 'say';
+    $('nextWrap').hidden = true; $('pad').hidden = say; $('sayWrap').hidden = !say;
+    $('saidBtn').hidden = false; $('sayHint').hidden = false; $('judgeWrap').hidden = true;
+    var done = Math.min(q.i, q.queue.length);
+    $('barFill').style.width = (done / q.queue.length * 100) + '%';
+    $('count').textContent = (q.i + 1) + ' / ' + q.queue.length;
+    renderInput();
+  }
+
+  function renderInput() {
+    var el = $('ans');
+    el.textContent = q.input;
+    el.classList.toggle('empty', q.input === '');
+    $('okBtn').disabled = q.input === '';
+  }
+
+  function press(k) {
+    if (!q || q.locked) return;
+    if (k === 'del') q.input = q.input.slice(0, -1);
+    else if (k === 'ok') return check();
+    else if (q.input.length < 3) { q.input = (q.input === '0' ? '' : q.input) + k; q.lastKey = performance.now(); }
+    renderInput();
+  }
+
+  function stopClock() {
+    clearTimeout(lateTimer);
+    $('timer').classList.add('stop');
+  }
+
+  // Typen: de klok stopt bij het laatst getypte cijfer, het tikken op OK telt niet mee.
+  function check() {
+    if (q.input === '') return;
+    q.locked = true;
+    stopClock();
+    judge(+q.input === cur().t * cur().f);
+  }
+
+  // Hardop: de klok stopt bij "Gezegd!", daarna verschijnt het antwoord en kiest ze zelf Goed of Fout.
+  function said() {
+    if (!q || q.locked) return;
+    q.locked = true; q.lastKey = performance.now();
+    stopClock(); stopListening();
+    var it = cur();
+    $('ans').textContent = it.t * it.f; $('ans').classList.remove('empty');
+    $('saidBtn').hidden = true; $('sayHint').hidden = true; $('judgeWrap').hidden = false;
+  }
+
+  /* ---------- Microfoon: werkt alleen op de losse website (Chrome, Safari), niet binnen Claude ---------- */
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var micOK = !!SR, rec = null, listening = false;
+  var UNITS = { een: 1, 'één': 1, twee: 2, drie: 3, vier: 4, vijf: 5, zes: 6, zeven: 7, acht: 8, negen: 9 };
+  var TENS = { twintig: 20, dertig: 30, veertig: 40, vijftig: 50, zestig: 60, zeventig: 70, tachtig: 80, negentig: 90 };
+  var WORDS = { nul: 0, tien: 10, elf: 11, twaalf: 12, dertien: 13, veertien: 14, vijftien: 15, zestien: 16,
+    zeventien: 17, achttien: 18, negentien: 19, honderd: 100 };
+  function wordNum(w) {
+    if (w in UNITS) return UNITS[w];
+    if (w in TENS) return TENS[w];
+    if (w in WORDS) return WORDS[w];
+    var m = w.match(/^(een|één|twee|drie|vier|vijf|zes|zeven|acht|negen)(en|ën)(twintig|dertig|veertig|vijftig|zestig|zeventig|tachtig|negentig)$/);
+    return m ? UNITS[m[1]] + TENS[m[3]] : null;
+  }
+  // Alle getallen in wat er gehoord is, op volgorde: "7 keer 8 is 56" -> [7, 8, 56].
+  function numbersIn(text) {
+    var out = [];
+    (text.toLowerCase().replace(/\s+(en|ën)\s+/g, 'en').match(/\d+|[a-zà-ü]+/g) || []).forEach(function (w) {
+      var n = /^\d+$/.test(w) ? +w : wordNum(w);
+      if (n !== null) out.push(n);
+    });
+    return out;
+  }
+  function wantListen() { return micOK && q && !q.locked && store.mode === 'say' && !$('quiz').hidden; }
+  function startRec() {
+    if (listening) return;
+    try { rec.start(); listening = true; } catch (e) {}
+  }
+  function listen() {
+    if (!micOK) return;
+    if (!rec) {
+      rec = new SR();
+      rec.lang = 'nl-NL'; rec.continuous = true; rec.interimResults = true; rec.maxAlternatives = 3;
+      rec.onresult = onHeard;
+      rec.onstart = micStatus;
+      rec.onerror = function (e) {
+        if (e.error === 'not-allowed' || e.error === 'service-not-allowed' || e.error === 'audio-capture') { micOK = false; micStatus(); }
+      };
+      rec.onend = function () { listening = false; if (wantListen()) startRec(); };
+    }
+    startRec();
+  }
+  function stopListening() {
+    if (rec) { try { rec.abort(); } catch (e) {} }
+    listening = false;
+  }
+  function micStatus() {
+    var on = micOK && store.mode === 'say';
+    $('micLine').textContent = on ? '🎤 Ik luister… zeg het antwoord.' : '';
+    $('sayHint').textContent = on ? 'Hoort de app je niet? Tik dan op Gezegd!' : 'Zeg het antwoord hardop en tik dan op de knop.';
+  }
+  // Een goed antwoord telt meteen (ook als het nog niet "af" is), een fout antwoord pas als de zin klaar is.
+  function onHeard(e) {
+    if (!q || q.locked || store.mode !== 'say') return;
+    var right = cur().t * cur().f;
+    for (var i = e.resultIndex; i < e.results.length; i++) {
+      var res = e.results[i];
+      for (var a = 0; a < res.length; a++) {
+        var nums = numbersIn(res[a].transcript);
+        if (nums.length && nums[nums.length - 1] === right) return heard(right);
+      }
+      if (res.isFinal) {
+        var n = numbersIn(res[0].transcript);
+        if (n.length) return heard(n[n.length - 1]);
+      }
+    }
+  }
+  function heard(n) {
+    q.locked = true; q.lastKey = performance.now();
+    stopClock(); stopListening();
+    $('heard').textContent = 'Ik hoorde: ' + n;
+    $('ans').textContent = n; $('ans').classList.remove('empty');
+    $('saidBtn').hidden = true; $('sayHint').hidden = true; $('micLine').textContent = '';
+    judge(n === cur().t * cur().f);
+  }
+
+  function judge(ok) {
+    var it = cur(), right = it.t * it.f, st = stat(it.t, it.f);
+    var card = $('sumCard');
+    $('judgeWrap').hidden = true;
+    stopListening();
+    var secs = (q.lastKey - q.start) / 1000, fast = secs <= limit();
+    var secTxt = secs.toFixed(1).replace('.', ',') + ' sec';
+    card.classList.remove('shake', 'pop'); void card.offsetWidth;
+    if (ok) {
+      card.classList.add('good', 'pop');
+      $('feedback').textContent = fast ? PRAISE[Math.floor(Math.random() * PRAISE.length)] : 'Goed! Nu nog wat sneller.';
+      $('timeText').textContent = fast ? secTxt + ' ⚡' : secTxt;
+      if (!it.retry) {
+        st.m = Math.max(0, st.m - 1);
+        st.slow = !fast;
+        if (fast) { q.fast++; st.s++; } else { st.s = 0; q.slow.push(it); }
+      }
+      save();
+      setTimeout(next, fast ? 900 : 1500);
+    } else {
+      card.classList.add('bad', 'shake');
+      $('ans').textContent = right;
+      $('feedback').textContent = 'Bijna! Het is ' + right + '.';
+      if (!it.retry) {
+        st.s = 0; st.m++;
+        q.missed.push(it);
+        q.queue.push({ t: it.t, f: it.f, flip: !it.flip, retry: true });
+      }
+      save();
+      $('pad').hidden = true; $('sayWrap').hidden = true; $('nextWrap').hidden = false;
+      $('nextBtn').focus();
+    }
+  }
+
+  function next() {
+    q.i++;
+    if (q.i >= q.queue.length) finish(); else renderQuestion();
+  }
+
+  /* ---------- Done ---------- */
+  function finish() {
+    stopListening();
+    var n = q.fast;
+    var stars = n >= 9 ? 3 : n >= 7 ? 2 : 1;
+    var starSvg = '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="CLS" d="M12 2.5l2.9 6 6.6.8-4.9 4.5 1.3 6.5L12 17l-5.9 3.3 1.3-6.5L2.5 9.3l6.6-.8z"/></svg>';
+    var html = '';
+    for (var i = 0; i < 3; i++) html += starSvg.replace('CLS', i < stars ? 's-on' : 's-off');
+    $('stars').innerHTML = html;
+    $('stars').setAttribute('aria-label', stars + ' van 3 sterren');
+    $('score').innerHTML = n + '<small> / ' + ROUND + '</small>';
+    $('scoreText').textContent = 'goed binnen ' + limit() + ' seconden';
+    $('doneTitle').textContent = n === ROUND ? 'Alles goed, Nova!' : n >= 7 ? 'Goed gedaan, Nova!' : 'Lekker geoefend, Nova!';
+    $('misses').innerHTML = q.missed.map(function (it) {
+      return '<span class="chip">' + it.f + ' × ' + it.t + ' = ' + (it.t * it.f) + '</span>';
+    }).join('');
+    $('missBlock').hidden = q.missed.length === 0;
+    $('slows').innerHTML = q.slow.map(function (it) {
+      return '<span class="chip slow">' + it.f + ' × ' + it.t + ' = ' + (it.t * it.f) + '</span>';
+    }).join('');
+    $('slowBlock').hidden = q.slow.length === 0;
+    show('done');
+  }
+
+  /* ---------- Look ---------- */
+  var lookT = 7;
+  function renderLook() {
+    var tabs = $('lookTabs'); tabs.innerHTML = '';
+    for (var t = 1; t <= 10; t++) (function (t) {
+      var b = document.createElement('button');
+      b.className = 'mini'; b.textContent = t; b.style.setProperty('--c', colorOf(t));
+      b.setAttribute('aria-pressed', t === lookT);
+      b.onclick = function () { lookT = t; renderLook(); };
+      tabs.appendChild(b);
+    })(t);
+    var list = $('lookList'); list.style.setProperty('--c', colorOf(lookT)); list.innerHTML = '';
+    for (var f = 1; f <= 10; f++) {
+      var row = document.createElement('div');
+      row.innerHTML = '<span>' + f + '</span><span class="op">×</span><span>' + lookT + '</span><span class="op">=</span><span class="res">' + (f * lookT) + '</span>';
+      list.appendChild(row);
+    }
+  }
+
+  /* ---------- Wiring ---------- */
+  $('startBtn').onclick = startRound;
+  $('againBtn').onclick = startRound;
+  $('homeBtn').onclick = function () { renderHome(); show('home'); };
+  $('stopBtn').onclick = function () { stopListening(); q = null; renderHome(); show('home'); };
+  $('lookBtn').onclick = function () { if (store.sel.length) lookT = store.sel[0]; renderLook(); show('look'); };
+  $('lookBack').onclick = function () { show('home'); };
+  $('nextBtn').onclick = next;
+  $('saidBtn').onclick = said;
+  $('judgeOk').onclick = function () { judge(true); };
+  $('judgeBad').onclick = function () { judge(false); };
+  ['modeType', 'modeSay'].forEach(function (id) {
+    $(id).onclick = function () { store.mode = $(id).getAttribute('data-mode'); save(); renderHome(); };
+  });
+  $('pad').addEventListener('click', function (e) {
+    var k = e.target.closest('[data-k]'); if (k) press(k.getAttribute('data-k'));
+  });
+  document.addEventListener('keydown', function (e) {
+    if ($('quiz').hidden || !q) return;
+    if (!$('nextWrap').hidden) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); next(); } return; }
+    if (store.mode === 'say') {
+      if ((e.key === 'Enter' || e.key === ' ') && !$('saidBtn').hidden) { e.preventDefault(); said(); }
+      return;
+    }
+    if (/^[0-9]$/.test(e.key)) press(e.key);
+    else if (e.key === 'Backspace') press('del');
+    else if (e.key === 'Enter') { e.preventDefault(); press('ok'); }
+  });
+
+  renderHome();
+})();
+</script>
+</body>
+</html>
