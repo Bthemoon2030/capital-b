@@ -348,7 +348,7 @@ button:focus-visible { outline: 3px solid var(--t6); outline-offset: 3px; }
 <script>
 (function () {
   var KEY = 'tafels-oefenen-v1';
-  var ROUND = 10;
+  var ROUND = 25;
   var lateTimer = null;
   var COLORS = { 6: '--t6', 7: '--t7', 8: '--t8' };
   var PRAISE = ['Goed zo!', 'Super!', 'Top!', 'Knap hoor!', 'Helemaal goed!', 'Yes!'];
@@ -410,6 +410,25 @@ button:focus-visible { outline: 3px solid var(--t6); outline-offset: 3px; }
     save(); renderHome();
   }
 
+  function shuffle(a) {
+    for (var i = a.length - 1; i > 0; i--) { var k = Math.floor(Math.random() * (i + 1)); var tmp = a[i]; a[i] = a[k]; a[k] = tmp; }
+    return a;
+  }
+  // Zorg dat dezelfde som nooit twee keer direct na elkaar komt.
+  function spreadOut(a) {
+    // 8 × 6 en 6 × 8 tellen als dezelfde som.
+    function key(x) { var a = x.t !== undefined ? [x.t, x.f] : x; return Math.min(a[0], a[1]) + 'x' + Math.max(a[0], a[1]); }
+    for (var i = 1; i < a.length; i++) {
+      if (key(a[i]) !== key(a[i - 1])) continue;
+      for (var j = 0; j < a.length; j++) {
+        if (j === i || key(a[j]) === key(a[i - 1])) continue;
+        if (j > 0 && j - 1 !== i && key(a[j - 1]) === key(a[i])) continue;
+        if (j + 1 < a.length && j + 1 !== i && key(a[j + 1]) === key(a[i])) continue;
+        var tmp = a[i]; a[i] = a[j]; a[j] = tmp; break;
+      }
+    }
+  }
+
   /* ---------- Round building: sums she gets wrong come back more often ---------- */
   function buildRound() {
     var pool = [];
@@ -421,15 +440,16 @@ button:focus-visible { outline: 3px solid var(--t6); outline-offset: 3px; }
         pool.push({ t: t, f: f, w: w });
       }
     });
-    var picked = [];
-    while (picked.length < ROUND && pool.length) {
-      var total = pool.reduce(function (a, p) { return a + p.w; }, 0);
+    var picked = [], left = [];
+    while (picked.length < ROUND) {
+      // Op = op: begin opnieuw met alle sommen (één tafel heeft er maar 10).
+      if (!left.length) left = pool.slice();
+      var total = left.reduce(function (a, p) { return a + p.w; }, 0);
       var r = Math.random() * total, j = 0;
-      while (r > pool[j].w && j < pool.length - 1) { r -= pool[j].w; j++; }
-      picked.push(pool.splice(j, 1)[0]);
+      while (r > left[j].w && j < left.length - 1) { r -= left[j].w; j++; }
+      picked.push(left.splice(j, 1)[0]);
     }
-    // shuffle and pick a random order (6 × 7 or 7 × 6)
-    for (var i = picked.length - 1; i > 0; i--) { var k = Math.floor(Math.random() * (i + 1)); var tmp = picked[i]; picked[i] = picked[k]; picked[k] = tmp; }
+    shuffle(picked); spreadOut(picked);
     return picked.map(function (p) { return { t: p.t, f: p.f, flip: Math.random() < 0.5, retry: false }; });
   }
 
@@ -439,9 +459,11 @@ button:focus-visible { outline: 3px solid var(--t6); outline-offset: 3px; }
   // De groen gemarkeerde sommen van het tafelblad, geschreven zoals op het blad (f × t).
   var GREEN = [[6, 4], [7, 4], [8, 6], [7, 7], [8, 7], [6, 8], [7, 8], [8, 8]];
   function greenRound() {
-    var list = GREEN.map(function (g) { return { t: g[1], f: g[0], flip: true, retry: false }; });
-    for (var i = list.length - 1; i > 0; i--) { var k = Math.floor(Math.random() * (i + 1)); var tmp = list[i]; list[i] = list[k]; list[k] = tmp; }
-    return list;
+    var list = [];
+    while (list.length < ROUND) list = list.concat(shuffle(GREEN.slice()));
+    list = list.slice(0, ROUND);
+    spreadOut(list);
+    return list.map(function (g) { return { t: g[1], f: g[0], flip: true, retry: false }; });
   }
 
   var lastKind = 'normal';
