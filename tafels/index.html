@@ -387,7 +387,7 @@ button:focus-visible { outline: 3px solid var(--t6); outline-offset: 3px; }
       main.appendChild(b);
     });
     var more = $('moreTables'); more.innerHTML = '';
-    [1, 2, 3, 4, 5, 9, 10].forEach(function (t) {
+    [1, 2, 3, 4, 5, 9, 10, 11, 12].forEach(function (t) {
       var b = document.createElement('button');
       b.className = 'mini'; b.textContent = t;
       b.setAttribute('aria-pressed', store.sel.indexOf(t) >= 0);
@@ -604,7 +604,7 @@ button:focus-visible { outline: 3px solid var(--t6); outline-offset: 3px; }
   var lookT = 7;
   function renderLook() {
     var tabs = $('lookTabs'); tabs.innerHTML = '';
-    for (var t = 1; t <= 10; t++) (function (t) {
+    for (var t = 1; t <= 12; t++) (function (t) {
       var b = document.createElement('button');
       b.className = 'mini'; b.textContent = t; b.style.setProperty('--c', colorOf(t));
       b.setAttribute('aria-pressed', t === lookT);
